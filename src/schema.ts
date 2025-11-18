@@ -1,4 +1,4 @@
-import z from 'zod/v4';
+import z from 'zod';
 
 export namespace schema {
   export const CommitId = z.string().min(40).max(40);

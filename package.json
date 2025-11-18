@@ -20,7 +20,7 @@
   "author": "Degu Labs, Inc",
   "license": "MIT",
   "dependencies": {
-    "zod": "^3.25.23"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
