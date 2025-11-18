@@ -1,6 +1,8 @@
 # Flakiness Report
 
-Official specification for the Flakiness.io report format.
+Official specification for the [Flakiness.io](https://flakiness.io) report format.
+
+The Flakiness Report format was inspired by the Playwright Test report format and extends it to support comprehensive test execution analysis across multiple environments.
 
 This package provides:
 
@@ -8,6 +10,16 @@ This package provides:
 - **Zod schema validation** for runtime validation of report JSON
 
 The package is compatible with both Node.js and browser environments.
+
+## Features
+
+The Flakiness Report format supports:
+
+- **Test Tags** - Categorize tests using custom tags
+- **Test Annotations** - Attach metadata and annotations to test runs
+- **Multiple Errors per Test** - Capture all errors including soft errors that don't fail the test
+- **System Monitoring** - Track CPU and RAM utilization during test execution with time-series sampling
+- **Multiple Execution Environments** - Run the same tests across different configurations (OS, browser, project settings) in a single report
 
 ## Source Files
 
