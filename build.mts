@@ -1,4 +1,4 @@
-#!/usr/bin/env npx kubik
+#!/usr/bin/env -S npx kubik
 
 import path from 'path';
 import esbuild from 'esbuild';
@@ -25,7 +25,7 @@ const { errors } = await esbuild.build({
   outdir: outDir,
   format: 'esm',
   platform: 'node',
-  target: ['node22'],
+  target: ['node24'],
   sourcemap: true,
   bundle: false,
   minify: false,
