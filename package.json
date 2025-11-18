@@ -2,6 +2,10 @@
   "name": "@flakiness/flakiness-report",
   "version": "0.11.0",
   "private": false,
+  "scripts": {
+    "build": "./build.mts",
+    "watch": "./build.mts --watch"
+  },
   "exports": {
     ".": {
       "types": "./types/src/flakinessReport.d.ts",
