@@ -266,53 +266,6 @@ export namespace FlakinessReport {
     value?: string;
   }
 
-  export function findTest(report: FlakinessReport.Report, testPredicate: (test: FlakinessReport.Test, parentSuites: FlakinessReport.Suite[]) => boolean): Test | undefined {
-    function visitSuite(suite: FlakinessReport.Suite, parents: FlakinessReport.Suite[]): FlakinessReport.Test|undefined {
-      for (const test of suite.tests ?? []) {
-        if (testPredicate(test, parents))
-          return test;
-      }
-      parents.push(suite);
-      for (const childSuite of suite.suites ?? []) {
-        const test = visitSuite(childSuite, parents);
-        if (test)
-          return test;
-      }
-      parents.pop();
-    }
-    for (const suite of report.suites) {
-      const test = visitSuite(suite, []);
-      if (test)
-        return test;
-    }
-  }
-
-  export function visitTests(report: FlakinessReport.Report, testVisitor: (test: FlakinessReport.Test, parentSuites: FlakinessReport.Suite[]) => void) {
-    function visitSuite(suite: FlakinessReport.Suite, parents: FlakinessReport.Suite[]) {
-      parents.push(suite);
-      for (const test of suite.tests ?? [])
-        testVisitor(test, parents);
-      for (const childSuite of suite.suites ?? [])
-        visitSuite(childSuite, parents);
-      parents.pop();
-    }
-    for (const suite of report.suites)
-      visitSuite(suite, []);
-  }
-
-  export async function visitTestsAsync(report: FlakinessReport.Report, testVisitor: (test: FlakinessReport.Test, parentSuites: FlakinessReport.Suite[]) => Promise<void>) {
-    async function visitSuite(suite: FlakinessReport.Suite, parents: FlakinessReport.Suite[]) {
-      for (const test of suite.tests ?? [])
-        await testVisitor(test, parents);
-      parents.push(suite);
-      for (const childSuite of suite.suites ?? [])
-        await visitSuite(childSuite, parents);
-      parents.pop();
-    }
-    for (const suite of report.suites)
-      await visitSuite(suite, []);
-  }
-
   /**
    * Either returns error if the object doesn't match schema,
    * or undefined.
@@ -322,10 +275,6 @@ export namespace FlakinessReport {
     if (!validation.success)
       return z.prettifyError(validation.error);
     return undefined;
-  }
-
-  export function jsonSchema(): any|undefined {
-    return z.toJSONSchema(schema.Report);
   }
 }
 
