@@ -17,14 +17,27 @@ export namespace FlakinessReport {
   export type Number1Based = Brand<number, 'FlakinessReport.Number1Based'>;
   export type GitFilePath = Brand<string, 'FlakinessReport.GitFilePath'>;
 
+  /**
+   * Represents a location that cannot be determined or doesn't exist.
+   * Use this constant when test location information is unavailable.
+   */
   export const NO_LOCATION: Location = {
     file: '' as GitFilePath,
     line: 0 as Number1Based,
     column: 0 as Number1Based,
   }
 
+  /**
+   * Report category for Playwright test reports.
+   */
   export const CATEGORY_PLAYWRIGHT = 'playwright';
+  /**
+   * Report category for JUnit test reports.
+   */
   export const CATEGORY_JUNIT = 'junit';
+  /**
+   * Report category for performance test reports.
+   */
   export const CATEGORY_PERF = 'perf';
 
   /**
@@ -51,6 +64,14 @@ export namespace FlakinessReport {
    * Represents a test execution outcome.
    */
   export type TestStatus = 'passed' | 'failed' | 'timedOut' | 'skipped' | 'interrupted';
+  
+  /**
+   * Represents the overall test outcome classification.
+   * - 'skipped': Test was skipped
+   * - 'expected': Test passed when it was expected to pass, or failed when it was expected to fail
+   * - 'unexpected': Test failed when it was expected to pass, or passed when it was expected to fail
+   * - 'flaky': Test outcome varied between runs
+   */
   export type TestOutcome = 'skipped' | 'expected' | 'unexpected' | 'flaky';
 
   /**
@@ -89,14 +110,17 @@ export namespace FlakinessReport {
     opaqueData?: any,
   }
 
+  /**
+   * Represents a single sample of system resource utilization at a point in time.
+   */
   export interface SystemUtilizationSample {
     /**
-     * Timestamp deltas from previous sample timestamp. The very first sample contains delta from
+     * Timestamp delta from previous sample timestamp. The very first sample contains delta from
      * `SystemUtilization.startTimestamp`.
      */
     dts: FlakinessReport.DurationMS,
     /**
-     * A number between 0 and 100 that represents system cpu utilization in percents. Can be rational.
+     * A number between 0 and 100 that represents system CPU utilization in percents. Can be rational.
      */
     cpuUtilization: number,
     /**
@@ -105,16 +129,32 @@ export namespace FlakinessReport {
     memoryUtilization: number,
   }
 
+  /**
+   * Represents system resource utilization monitoring data collected during test execution.
+   */
   export interface SystemUtilization {
+    /**
+     * Total system memory in bytes at the start of monitoring.
+     */
     totalMemoryBytes: number,
+    /**
+     * Unix timestamp when monitoring started.
+     */
     startTimestamp: UnixTimestampMS,
+    /**
+     * Array of utilization samples taken at regular intervals during test execution.
+     */
     samples: SystemUtilizationSample[],
   }
 
   /**
-   * Report itself.
+   * The root report object containing all test execution data.
    */
   export interface Report {
+    /**
+     * Report category identifier (e.g., 'playwright', 'junit', 'perf').
+     * See `CATEGORY_*` constants for predefined categories.
+     */
     category: string;
 
     /**
@@ -129,108 +169,252 @@ export namespace FlakinessReport {
     relatedCommitIds?: CommitId[],
 
     /**
-     *  Root configuration file that was used to run tests.
-     *  In Playwright world, this is the path to the `playwright.config.ts` file, if any.
+     * Root configuration file that was used to run tests.
+     * In Playwright world, this is the path to the `playwright.config.ts` file, if any.
      */
     configPath?: GitFilePath;
 
     /**
-     * This is the URL of the job that generated this report.
+     * URL of the job or CI/CD run that generated this report.
      */
     url?: string;
 
     /**
      * List of all environments that were used to run tests.
-     * In Playwright world, single config file might define multiple projects; each of this projects 
+     * In Playwright world, a single config file might define multiple projects; each of these projects
+     * becomes an environment entry in this array.
      */
-    environments: Environment[], // A list of environments that were used to run tests.
+    environments: Environment[];
 
+    /**
+     * Root test suites in the report. Suites can be nested and contain both sub-suites and tests.
+     */
     suites: Suite[];
 
+    /**
+     * Errors that occurred during test execution but could not be attributed to a specific test.
+     * These are typically infrastructure or setup errors.
+     */
     unattributedErrors: ReportError[];
 
     /**
-     * Unix timestamp
+     * Unix timestamp (in milliseconds) when test execution started.
      */
     startTimestamp: UnixTimestampMS;
+    
+    /**
+     * Total duration of test execution in milliseconds.
+     */
     duration: DurationMS;
 
     /**
-     * This is the opaque data that is attached to the report.
+     * Opaque data that is attached to the report.
+     * This data is not indexed or validated by the schema.
      * 
      * Playwright: this is Playwright's configuration.
      */
     opaqueData?: any,
 
+    /**
+     * System resource utilization data collected during test execution.
+     * Includes CPU and memory usage samples taken at regular intervals.
+     */
     systemUtilization?: SystemUtilization,
   }
 
+  /**
+   * Type of test suite.
+   * - 'file': Suite represents a test file
+   * - 'anonymous suite': Suite without a corresponding source location
+   * - 'suite': Regular nested suite within a file
+   */
   export type SuiteType = 'file' | 'anonymous suite' | 'suite';
 
+  /**
+   * Represents a test suite that can contain other suites and/or tests.
+   */
   export interface Suite {
+    /**
+     * Type of this suite.
+     */
     type: SuiteType,
+    /**
+     * Human-readable title of the suite.
+     */
     title: string;
+    /**
+     * Source location of the suite definition.
+     */
     location: Location;
 
+    /**
+     * Nested sub-suites within this suite.
+     */
     suites?: Suite[];
+    /**
+     * Tests contained directly in this suite.
+     */
     tests?: Test[];
   }
 
+  /**
+   * Represents a single test case.
+   */
   export interface Test {
+    /**
+     * Human-readable title of the test.
+     */
     title: string;
-    // Test location is a must.
-    // If for some reason, your tests don't have location.. well, this sucks,
-    // but feel free to report NO_LOCATION instead: { file: '', line: 0, column: 0 }.
+    /**
+     * Source location of the test definition.
+     * 
+     * Test location is required. If for some reason your tests don't have location,
+     * use `NO_LOCATION` instead: { file: '', line: 0, column: 0 }.
+     */
     location: Location;
 
+    /**
+     * Optional tags associated with this test for categorization and filtering.
+     */
     tags?: string[],
+    /**
+     * All execution attempts of this test across different environments.
+     * Each attempt represents one run of the test in a specific environment.
+     */
     attempts: RunAttempt[];
   }
 
+  /**
+   * Metadata annotation attached to a test run.
+   * Used to provide additional context or mark special conditions (e.g., 'skip', 'slow', 'fixme').
+   */
   export interface Annotation {
+    /**
+     * Type of annotation (e.g., 'skip', 'slow', 'fixme').
+     */
     type: string,
+    /**
+     * Optional human-readable description of the annotation.
+     */
     description?: string,
+    /**
+     * Optional location in source code where this annotation was defined or applied.
+     */
     location?: Location,
   }
 
+  /**
+   * Reference to an attachment (screenshot, video, log, etc.) associated with a test run.
+   * The actual attachment content is stored separately and retrieved using the attachment ID.
+   */
   export interface Attachment {
+    /**
+     * Filename of the attachment.
+     */
     name: string;
+    /**
+     * MIME type of the attachment content (e.g., 'image/png', 'video/webm', 'text/plain').
+     */
     contentType: string;
+    /**
+     * Unique identifier used to retrieve the actual attachment content.
+     */
     id: AttachmentId;
   }
 
+  /**
+   * Represents a single execution attempt of a test in a specific environment.
+   */
   export interface RunAttempt {
-    // Index of the environment in the environments array.
+    /**
+     * Index of the environment in the report's `environments` array used for this attempt.
+     */
     environmentIdx: number;
+    /**
+     * Expected status for this test (what the test was supposed to do).
+     */
     expectedStatus: TestStatus;
+    /**
+     * Actual status that resulted from this test execution.
+     */
     status: TestStatus;
-    startTimestamp: UnixTimestampMS; // Unix timestamp
-    duration: DurationMS; // milliseconds
+    /**
+     * Unix timestamp (in milliseconds) when this test attempt started.
+     */
+    startTimestamp: UnixTimestampMS;
+    /**
+     * Duration of this test attempt in milliseconds.
+     */
+    duration: DurationMS;
 
+    /**
+     * Maximum allowed duration (timeout) for this test attempt in milliseconds.
+     */
     timeout?: DurationMS;
+    /**
+     * Annotations attached to this test run.
+     */
     annotations?: Annotation[],
 
     /**
-     * These are all the errors during test execution.
-     * In typical test, there might be only one error.
+     * All errors that occurred during test execution.
+     * In typical tests, there might be only one error.
      * However, in Playwright world, there might be soft errors, and these will be here as well.
      */
     errors?: ReportError[];
 
+    /**
+     * Index of this test when running in parallel (if applicable).
+     * Used to identify which parallel worker executed this attempt.
+     */
     parallelIndex?: number;
+    /**
+     * Nested test steps that were executed as part of this test attempt.
+     */
     steps?: TestStep[];
 
+    /**
+     * Standard output captured during test execution.
+     */
     stdout?: STDIOEntry[];
+    /**
+     * Standard error output captured during test execution.
+     */
     stderr?: STDIOEntry[];
+    /**
+     * Attachments generated during this test attempt (screenshots, videos, logs, etc.).
+     */
     attachments?: Attachment[];
   }
 
+  /**
+   * Represents a step within a test execution (e.g., "click button", "fill form").
+   * Steps can be nested to represent hierarchical test actions.
+   */
   export interface TestStep {
+    /**
+     * Human-readable title describing what this step does.
+     */
     title: string;
+    /**
+     * Duration of this step in milliseconds.
+     */
     duration: DurationMS;
+    /**
+     * Optional source location where this step was defined or executed.
+     */
     location?: Location;
+    /**
+     * Optional code snippet showing the step implementation.
+     */
     snippet?: string;
+    /**
+     * Optional error that occurred during this step execution.
+     */
     error?: ReportError;
+    /**
+     * Nested sub-steps within this step.
+     */
     steps?: TestStep[];
   }
 
@@ -244,7 +428,7 @@ export namespace FlakinessReport {
    */
   export interface ReportError {
     /**
-     * Error location in the source code.
+     * Error location in the source code where the error occurred.
      */
     location?: Location;
 
@@ -254,21 +438,27 @@ export namespace FlakinessReport {
     message?: string;
 
     /**
-     * Error stack. Set when [Error] (or its subclass) has been thrown.
+     * Error stack trace. Set when [Error] (or its subclass) has been thrown.
      */
     stack?: string;
 
+    /**
+     * Code snippet showing the context around where the error occurred.
+     */
     snippet?: string;
 
     /**
-     * The value that was thrown. Set when anything except the [Error] (or its subclass) has been thrown.
+     * String representation of the value that was thrown.
+     * Set when anything except [Error] (or its subclass) has been thrown.
      */
     value?: string;
   }
 
   /**
-   * Either returns error if the object doesn't match schema,
-   * or undefined.
+   * Validates a report object against the Flakiness Report schema.
+   * 
+   * @param report - The report object to validate
+   * @returns A formatted error string if validation fails, or `undefined` if the report is valid
    */
   export function validate(report: Report): string|undefined {
     const validation = schema.Report.safeParse(report);

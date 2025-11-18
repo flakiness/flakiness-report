@@ -6,8 +6,8 @@ The Flakiness Report format was inspired by the Playwright Test report format an
 
 This package provides:
 
-- **TypeScript type definitions** for type-safe usage of Flakiness Report data structures
-- **Zod schema validation** for runtime validation of report JSON
+- [**TypeScript type definitions**](./src/flakinessReport.ts) for type-safe usage of Flakiness Report data structures
+- [**Zod schema validation**](./src/schema.ts) for runtime validation of report JSON
 
 The package is compatible with both Node.js and browser environments.
 
@@ -25,6 +25,8 @@ The Flakiness Report format supports:
 
 - [TypeScript definitions](./src/flakinessReport.ts) - Complete type definitions for the Flakiness Report format
 - [Zod schema](./src/schema.ts) - Runtime validation schemas
+
+> **💡 Tip:** The TypeScript type definitions include extensive inline comments that describe each entity and field in detail. Be sure to read through the comments in `flakinessReport.ts` for a comprehensive understanding of the report format structure.
 
 ## Installation
 
