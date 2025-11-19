@@ -61,15 +61,5 @@ The report JSON only contains attachment metadata. The actual attachment data mu
 
 ## Development
 
-Build the package:
-
-```bash
-npm run build
-```
-
-Watch for changes and rebuild automatically:
-
-```bash
-npm run watch
-```
+For information on building, watching, and contributing to this project, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
