@@ -4,6 +4,10 @@ Official specification for the [Flakiness.io](https://flakiness.io) report forma
 
 The Flakiness Report format was inspired by the Playwright Test report format and extends it to support comprehensive test execution analysis across multiple environments.
 
+In a nutshell, *Flakiness Report* is a **JSON file** that follows this
+specification. Oftentimes, this JSON file is accompanied by a set of files -
+*attachments*. Usually both JSON file and attachments are placed in the same directory.
+
 This package provides:
 
 - [**TypeScript type definitions**](./src/flakinessReport.ts) for type-safe usage of Flakiness Report data structures
