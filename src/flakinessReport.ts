@@ -192,6 +192,11 @@ export namespace FlakinessReport {
     suites: Suite[];
 
     /**
+     * Root test in the report - these do not belong to any suite.
+     */
+    tests?: Test[];
+
+    /**
      * Errors that occurred during test execution but could not be attributed to a specific test.
      * These are typically infrastructure or setup errors.
      */
