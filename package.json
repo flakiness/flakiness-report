@@ -1,6 +1,6 @@
 {
   "name": "@flakiness/flakiness-report",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "private": false,
   "scripts": {
     "build": "npx kubik ./build.mts",
