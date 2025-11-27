@@ -195,7 +195,7 @@ export namespace FlakinessReport {
      * Errors that occurred during test execution but could not be attributed to a specific test.
      * These are typically infrastructure or setup errors.
      */
-    unattributedErrors: ReportError[];
+    unattributedErrors?: ReportError[];
 
     /**
      * Unix timestamp (in milliseconds) when test execution started.

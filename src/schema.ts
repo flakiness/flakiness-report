@@ -137,7 +137,7 @@ export namespace schema {
     url: z.string().optional(),
     environments: z.array(Environment),
     suites: z.array(Suite),
-    unattributedErrors: z.array(ReportError),
+    unattributedErrors: z.array(ReportError).optional(),
     startTimestamp: UnixTimestampMS,
     duration: DurationMS,
     opaqueData: z.any().optional(),
