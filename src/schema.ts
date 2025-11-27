@@ -77,16 +77,17 @@ export namespace schema {
   });
 
   export const RunAttempt = z.object({
-    timeout: DurationMS.optional(),
-    annotations: z.array(Annotation),
-    expectedStatus: TestStatus,
     // Index of the environment in the environments array (must be >= 0).
     environmentIdx: z.number().min(0),
 
+    expectedStatus: TestStatus,
     status: TestStatus,
     startTimestamp: UnixTimestampMS,
     duration: DurationMS,
 
+    timeout: DurationMS.optional(),
+
+    annotations: z.array(Annotation).optional(),
     errors: z.array(ReportError).optional(),
 
     parallelIndex: z.number().optional(),
