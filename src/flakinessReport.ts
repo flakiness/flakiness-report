@@ -1,4 +1,3 @@
-import { z } from 'zod/v4';
 import { schema } from './schema.js';
 
 /**
@@ -8,6 +7,12 @@ import { schema } from './schema.js';
 type Brand<T, Brand extends string> = T & {
   readonly [B in Brand as `__${B}_brand`]: never;
 };
+
+/**
+ * Zod schema for FlakinessReport type. See Zod documentation
+ * on how to validate objects against it.
+ */
+export const FlakinessSchema = schema;
 
 export namespace FlakinessReport {
   export type CommitId = Brand<string, 'FlakinessReport.CommitId'>;
@@ -457,19 +462,6 @@ export namespace FlakinessReport {
      * Set when anything except [Error] (or its subclass) has been thrown.
      */
     value?: string;
-  }
-
-  /**
-   * Validates a report object against the Flakiness Report schema.
-   * 
-   * @param report - The report object to validate
-   * @returns A formatted error string if validation fails, or `undefined` if the report is valid
-   */
-  export function validate(report: Report): string|undefined {
-    const validation = schema.Report.safeParse(report);
-    if (!validation.success)
-      return z.prettifyError(validation.error);
-    return undefined;
   }
 }
 
