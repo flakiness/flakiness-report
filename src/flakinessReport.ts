@@ -1,5 +1,5 @@
-import { schema } from './schema.js';
 import z from 'zod';
+import { schema } from './schema.js';
 
 /**
  * Brands a type by intersecting it with a type with a brand property based on
@@ -16,16 +16,6 @@ export namespace FlakinessReport {
   export type DurationMS = Brand<number, 'FlakinessReport.DurationMS'>;
   export type Number1Based = Brand<number, 'FlakinessReport.Number1Based'>;
   export type GitFilePath = Brand<string, 'FlakinessReport.GitFilePath'>;
-
-  /**
-   * Represents a location that cannot be determined or doesn't exist.
-   * Use this constant when test location information is unavailable.
-   */
-  export const NO_LOCATION: Location = {
-    file: '' as GitFilePath,
-    line: 0 as Number1Based,
-    column: 0 as Number1Based,
-  }
 
   /**
    * Report category for Playwright test reports.
@@ -249,8 +239,10 @@ export namespace FlakinessReport {
     title: string;
     /**
      * Source location of the suite definition.
+     * Providing source location makes for the best user experience,
+     * so reporters should do their best to infer them.
      */
-    location: Location;
+    location?: Location;
 
     /**
      * Nested sub-suites within this suite.
@@ -272,11 +264,10 @@ export namespace FlakinessReport {
     title: string;
     /**
      * Source location of the test definition.
-     * 
-     * Test location is required. If for some reason your tests don't have location,
-     * use `NO_LOCATION` instead: { file: '', line: 0, column: 0 }.
+     * Providing source location makes for the best user experience,
+     * so reporters should do their best to infer them.
      */
-    location: Location;
+    location?: Location;
 
     /**
      * Optional tags associated with this test for categorization and filtering.

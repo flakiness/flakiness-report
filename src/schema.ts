@@ -73,7 +73,7 @@ export namespace schema {
   export const Annotation = z.object({
     type: z.string(),
     description: z.string().optional(),
-    location: z.optional(Location),
+    location: Location.optional(),
   });
 
   export const RunAttempt = z.object({
@@ -101,7 +101,7 @@ export namespace schema {
   export const Suite = z.object({
     type: SuiteType,
     title: z.string(),
-    location: Location,
+    location: Location.optional(),
 
     get suites() { return z.array(Suite).optional(); },
     get tests() { return  z.array(Test).optional(); }
@@ -109,7 +109,7 @@ export namespace schema {
 
   export const Test = z.object({
     title: z.string(),
-    location: Location,
+    location: Location.optional(),
 
     tags: z.array(z.string()).optional(),
     attempts: z.array(RunAttempt),
