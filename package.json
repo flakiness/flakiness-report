@@ -1,6 +1,10 @@
 {
   "name": "@flakiness/flakiness-report",
   "version": "0.15.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flakiness/flakiness-report.git"
+  },
   "private": false,
   "scripts": {
     "build": "npx kubik ./build.mts",
