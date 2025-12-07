@@ -54,15 +54,6 @@ export namespace FlakinessReport {
    * Represents a test execution outcome.
    */
   export type TestStatus = 'passed' | 'failed' | 'timedOut' | 'skipped' | 'interrupted';
-  
-  /**
-   * Represents the overall test outcome classification.
-   * - 'skipped': Test was skipped
-   * - 'expected': Test passed when it was expected to pass, or failed when it was expected to fail
-   * - 'unexpected': Test failed when it was expected to pass, or passed when it was expected to fail
-   * - 'flaky': Test outcome varied between runs
-   */
-  export type TestOutcome = 'skipped' | 'expected' | 'unexpected' | 'flaky';
 
   /**
    * Represents test environment that was used to execute test.
