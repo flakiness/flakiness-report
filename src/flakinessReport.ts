@@ -22,6 +22,10 @@ export namespace FlakinessReport {
    */
   export const CATEGORY_PLAYWRIGHT = 'playwright';
   /**
+   * Report category for PyTest test reports.
+   */
+  export const CATEGORY_PYTEST = 'pytest';
+  /**
    * Report category for JUnit test reports.
    */
   export const CATEGORY_JUNIT = 'junit';
