@@ -6,7 +6,7 @@ The Flakiness Report format was inspired by the Playwright Test report format an
 
 In a nutshell, *Flakiness Report* is a **JSON file** that follows this
 specification. Oftentimes, this JSON file is accompanied by a set of files -
-*attachments*. Usually both JSON file and attachments are placed in the same directory.
+*attachments*. This format defines a standardized file system layout for storing these test artifacts. 
 
 This package provides:
 
@@ -25,20 +25,113 @@ The Flakiness Report format supports:
 - **System Monitoring** - Track CPU and RAM utilization during test execution with time-series sampling
 - **Multiple Execution Environments** - Run the same tests across different configurations (OS, browser, project settings) in a single report
 
-## Source Files
+## Usage
 
+Once you have a `flakiness-report` on the file system, you can view & upload it
+using the [Flakiness CLI Tool](https://flakiness.io/docs/cli/):
+
+```sh
+# view report
+flakiness show ./flakiness-report
+# upload report to flakiness.io
+flakiness upload ./flakiness-report
+```
+
+Learn more in the [official documentation](https://flakiness.io/docs/cli/).
+
+## Specification
+
+### JSON format
 - [TypeScript definitions](./src/flakinessReport.ts) - Complete type definitions for the Flakiness Report format
 - [Zod schema](./src/schema.ts) - Runtime validation schemas
 
 > **💡 Tip:** The TypeScript type definitions include extensive inline comments that describe each entity and field in detail. Be sure to read through the comments in `flakinessReport.ts` for a comprehensive understanding of the report format structure.
 
-## Installation
+### Directory Structure
 
-```bash
-npm install @flakiness/flakiness-report
+Attachments (screenshots, videos, logs, etc.) are referenced in the report by ID rather than embedded directly.
+
+Each attachment in a `RunAttempt` contains:
+
+- `name` - The attachment filename
+- `contentType` - MIME type of the attachment
+- `id` - Unique identifier used to retrieve the actual attachment content. It is recommended to use the MD5 hash of the attachment content as the identifier.
+
+The actual attachment files are stored in the `attachments/` directory alongside the `report.json`, with their `id` as the filename (without extension).
+
+The report JSON and its attachments should be organized as follows:
+
+```
+flakiness-report/
+├── report.json
+└── attachments/
+    ├── 5d41402abc4b2a76b9719d911017c592
+    ├── 7d865e959b2466918c9863afca942d0f
+    └── 9bb58f26192e4ba00f01e2e7b136bbd8
 ```
 
-## Usage
+**Important:** Do not compress attachments manually. The Flakiness.io CLI tool automatically applies optimal compression for different file types during upload.
+
+
+## Minimal Example
+
+Here's a minimal Flakiness Report with one environment, one test and one attachment:
+
+```
+flakiness-report/
+├── report.json
+└── attachments/
+    └── 5d41402abc4b2a76b9719d911017c592
+```
+
+```json
+{
+  "category": "pytest",
+  "commitId": "a1b2c3d4e5f6789012345678901234567890abcd",
+  "environments": [
+    {
+      "name": "Python Tests"
+    }
+  ],
+  "tests": [
+    {
+      "title": "should pass basic test",
+      "location": {
+        "file": "tests/test_example.py",
+        "line": 3,
+        "column": 1
+      },
+      "attempts": [
+        {
+          "environmentIdx": 0,
+          "expectedStatus": "passed",
+          "status": "passed",
+          "startTimestamp": 1703001600000,
+          "duration": 1500,
+          "attachments": [
+            {
+              "name": "screenshot.png",
+              "contentType": "image/png",
+              "id": "5d41402abc4b2a76b9719d911017c592"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "startTimestamp": 1703001600000,
+  "duration": 2000
+}
+```
+
+## How to use this specification
+
+In Node.js, this package can be used directly:
+
+```bash
+# Install this type definition
+npm install @flakiness/flakiness-report
+```
 
 ```typescript
 import { FlakinessReport, FlakinessSchema } from '@flakiness/flakiness-report';
@@ -51,15 +144,7 @@ if (!validation.success)
   console.error(`Validation failed:`, z.prettifyError(validation.error));
 ```
 
-## Attachments
-
-Attachments (screenshots, videos, logs, etc.) are referenced in the report by ID rather than embedded directly. Each attachment in a `RunAttempt` contains:
-
-- `name` - The attachment filename
-- `contentType` - MIME type of the attachment
-- `id` - Unique identifier used to retrieve the actual attachment content
-
-The report JSON only contains attachment metadata. The actual attachment data must be stored and retrieved separately using the attachment ID.
+In other language ecosystems, it is recommended to use this repository to hand-craft (AI-craft?) a type definition of the Flakiness Report type which is native to your language ecosystem.
 
 ## Development
 
