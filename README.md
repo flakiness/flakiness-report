@@ -1,4 +1,4 @@
-# Flakiness Report
+# Flakiness Report Specification
 
 Official specification for the [Flakiness.io](https://flakiness.io) report format.
 
@@ -8,12 +8,11 @@ In a nutshell, *Flakiness Report* is a **JSON file** that follows this
 specification. Oftentimes, this JSON file is accompanied by a set of files -
 *attachments*. This format defines a standardized file system layout for storing these test artifacts. 
 
-This package provides:
+This repository contains:
 
 - [**TypeScript type definitions**](./src/flakinessReport.ts) for type-safe usage of Flakiness Report data structures
 - [**Zod schema validation**](./src/schema.ts) for runtime validation of report JSON
-
-The package is compatible with both Node.js and browser environments.
+- Directory layout to store report and its attachments on file system
 
 ## Features
 
@@ -42,8 +41,10 @@ Learn more in the [official documentation](https://flakiness.io/docs/cli/).
 ## Specification
 
 ### JSON format
-- [TypeScript definitions](./src/flakinessReport.ts) - Complete type definitions for the Flakiness Report format
-- [Zod schema](./src/schema.ts) - Runtime validation schemas
+
+- [JSON format explainer](./src/flakinessReport.ts) - JSON format explainer in a form
+  of a TypeScript type
+- [Zod schema](./src/schema.ts) - JSON format validator as a Zod schema
 
 > **💡 Tip:** The TypeScript type definitions include extensive inline comments that describe each entity and field in detail. Be sure to read through the comments in `flakinessReport.ts` for a comprehensive understanding of the report format structure.
 
@@ -124,14 +125,16 @@ flakiness-report/
 }
 ```
 
-## How to use this specification
+## NPM Package
 
-In Node.js, this package can be used directly:
+The repository is published to NPM and is compatible with both Node.js and browser environments:
 
 ```bash
 # Install this type definition
 npm install @flakiness/flakiness-report
 ```
+
+The package provides a simple validation utility for the reports.
 
 ```typescript
 import { FlakinessReport, FlakinessSchema } from '@flakiness/flakiness-report';
@@ -143,8 +146,6 @@ const validation = FlakinessSchema.Report.safeParse(report);
 if (!validation.success)
   console.error(`Validation failed:`, z.prettifyError(validation.error));
 ```
-
-In other language ecosystems, it is recommended to use this repository to hand-craft (AI-craft?) a type definition of the Flakiness Report type which is native to your language ecosystem.
 
 ## Development
 
