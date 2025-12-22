@@ -1,4 +1,4 @@
-# Flakiness Report Specification
+# Flakiness JSON Report Specification
 
 Official specification for the [Flakiness.io](https://flakiness.io) report format.
 
@@ -6,7 +6,7 @@ The Flakiness Report format was inspired by the Playwright Test report format an
 
 In a nutshell, *Flakiness Report* is a **JSON file** that follows this
 specification. Oftentimes, this JSON file is accompanied by a set of files -
-*attachments*. This format defines a standardized file system layout for storing these test artifacts. 
+*attachments*. This format defines a standardized file system layout for storing these test artifacts.
 
 This repository contains:
 
@@ -125,6 +125,38 @@ flakiness-report/
 }
 ```
 
+## Report Concepts
+
+1. **File Paths**
+  All paths inside report are posix-paths, relative to the git root, no matter what
+  platform the tests are executed at.
+1. **Test**
+  A test is a location in source
+2. **Suite**
+  Suite is a group of tests. Suites might be of different types, and also can have location in file.
+3. **Environment**
+  Environment is a key-value set that describe an execution environment. Environments contain description about operating system or testing properties. Certain reporters allow running the same tests under different environments, i.e. running the same set of end-2-end browser tests against different browsers. In this case, it is natural to
+  include browser as part of the execution environment. Flakiness JSON Report allows
+  expressing test runs under different environments.
+4. **Run Attempts**
+  Each test execution under certain environment is a run attempt. Sometimes, test runners might auto-retry failed tests. In the Flakiness Report, this will be recorded as another run attempt for the same test, under the same environment.
+5. **Test Statuses**
+  Each run attempt has an actual status and an expected status. Usually, the expected status is a `passed`, but certain test runners allow marking tests as "always fail".
+  In this case, their expeced status will be `failed`.
+6. **Test Tags**
+  Each test might have a **tag** - a case-insensetive marker, attached to the tag.
+  Tags are static, meaning that they cannot be attached to tests dynamically during execution. Usually test tags are only changed when the source code is changed.
+  A common example of tags would be `smoke`, `e2e`, `regression`, and so on.
+  Flakiness Report viewer allows filtering reports by tags.
+7. **Annotations**
+  Each test run might also have an annotation, attached to the run.
+  Unlike tags, annotations are dynamic: they are attached to run attempts, rather than tests themselves.
+  Flakienss Report Viewer allows filtering tests by annotations.
+  Annotations are commonly used for both dynamic and static test data. Examples include:
+  - `skip` annotations that mark tests as `skipped`. These don't have any descripton.
+  - `owner` annotations with owner name in the description. These are often used
+    to assign owners to a particular test. 
+
 ## NPM Package
 
 The repository is published to NPM and is compatible with both Node.js and browser environments:
@@ -137,12 +169,12 @@ npm install @flakiness/flakiness-report
 The package provides a simple validation utility for the reports.
 
 ```typescript
-import { FlakinessReport, FlakinessSchema } from '@flakiness/flakiness-report';
+import { FlakinessReport } from '@flakiness/flakiness-report';
 
 // Type-safe report handling
 const report: FlakinessReport.Report = { /* ... */ };
 
-const validation = FlakinessSchema.Report.safeParse(report);
+const validation = FlakinessSchema.validate(report);
 if (!validation.success)
   console.error(`Validation failed:`, z.prettifyError(validation.error));
 ```
