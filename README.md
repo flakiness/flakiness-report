@@ -48,32 +48,6 @@ Learn more in the [official documentation](https://flakiness.io/docs/cli/).
 
 > **💡 Tip:** The TypeScript type definitions include extensive inline comments that describe each entity and field in detail. Be sure to read through the comments in `flakinessReport.ts` for a comprehensive understanding of the report format structure.
 
-### Directory Structure
-
-Attachments (screenshots, videos, logs, etc.) are referenced in the report by ID rather than embedded directly.
-
-Each attachment in a `RunAttempt` contains:
-
-- `name` - The attachment filename
-- `contentType` - MIME type of the attachment
-- `id` - Unique identifier used to retrieve the actual attachment content. It is recommended to use the MD5 hash of the attachment content as the identifier.
-
-The actual attachment files are stored in the `attachments/` directory alongside the `report.json`, with their `id` as the filename (without extension).
-
-The report JSON and its attachments should be organized as follows:
-
-```
-flakiness-report/
-├── report.json
-└── attachments/
-    ├── 5d41402abc4b2a76b9719d911017c592
-    ├── 7d865e959b2466918c9863afca942d0f
-    └── 9bb58f26192e4ba00f01e2e7b136bbd8
-```
-
-**Important:** Do not compress attachments manually. The Flakiness.io CLI tool automatically applies optimal compression for different file types during upload.
-
-
 ## Minimal Example
 
 Here's a minimal Flakiness Report with one environment, one test and one attachment:
@@ -128,34 +102,59 @@ flakiness-report/
 ## Report Concepts
 
 1. **File Paths**
-  All paths inside report are posix-paths, relative to the git root, no matter what
-  platform the tests are executed at.
+    All file paths within the report are POSIX-formatted paths relative to the repository root, regardless of the platform on which tests are executed.
 1. **Test**
-  A test is a location in source
+    A test represents a specific location in the source code.
 2. **Suite**
-  Suite is a group of tests. Suites might be of different types, and also can have location in file.
+    A suite is a logical grouping of tests. Suites can be of various types and may have associated file locations.
 3. **Environment**
-  Environment is a key-value set that describe an execution environment. Environments contain description about operating system or testing properties. Certain reporters allow running the same tests under different environments, i.e. running the same set of end-2-end browser tests against different browsers. In this case, it is natural to
-  include browser as part of the execution environment. Flakiness JSON Report allows
-  expressing test runs under different environments.
+    An environment is a set of key-value pairs that describe the execution context. Environments capture information about the operating system, browser, and other testing properties.
 4. **Run Attempts**
-  Each test execution under certain environment is a run attempt. Sometimes, test runners might auto-retry failed tests. In the Flakiness Report, this will be recorded as another run attempt for the same test, under the same environment.
+    A run attempt represents a single execution of a test within a specific environment. When test runners automatically retry failed tests, each retry is recorded as a separate run attempt for the same test in the same environment.
 5. **Test Statuses**
-  Each run attempt has an actual status and an expected status. Usually, the expected status is a `passed`, but certain test runners allow marking tests as "always fail".
-  In this case, their expeced status will be `failed`.
+    Each run attempt has both an actual status and an expected status. The expected status is typically `passed`, but some test runners allow marking tests as expected to fail, in which case the expected status is `failed`.
+
+    The Flakiness Report viewer supports filtering reports by status.
 6. **Test Tags**
-  Each test might have a **tag** - a case-insensetive marker, attached to the tag.
-  Tags are static, meaning that they cannot be attached to tests dynamically during execution. Usually test tags are only changed when the source code is changed.
-  A common example of tags would be `smoke`, `e2e`, `regression`, and so on.
-  Flakiness Report viewer allows filtering reports by tags.
+    Test tags are case-insensitive markers assigned to tests. Tags are static and cannot be dynamically attached during test execution; they are typically modified only when source code changes. Common examples include `smoke`, `e2e`, and `regression`.
+
+    The Flakiness Report viewer supports filtering reports by tags.
 7. **Annotations**
-  Each test run might also have an annotation, attached to the run.
-  Unlike tags, annotations are dynamic: they are attached to run attempts, rather than tests themselves.
-  Flakienss Report Viewer allows filtering tests by annotations.
-  Annotations are commonly used for both dynamic and static test data. Examples include:
-  - `skip` annotations that mark tests as `skipped`. These don't have any descripton.
-  - `owner` annotations with owner name in the description. These are often used
-    to assign owners to a particular test. 
+    Annotations are metadata attached to individual run attempts, unlike tags which are attached to tests themselves. Annotations are dynamic and can vary across different test executions.
+    
+    Each annotation has a type and a description. Common use cases include:
+    - `skip` annotations to mark tests as skipped (without additional description)
+    - `owner` annotations to assign ownership of specific tests
+
+    The Flakiness Report viewer supports filtering by annotations.
+8. **Attachments**
+    Each run attempt might also have an attachment: a screenshots, video, log, or
+    any other piece of debugging information that is referenced by ID. Actual attachment contents are stored on the file system, following the directory layout explained in the "Attachments" section.
+
+### Attachments
+
+Attachments (screenshots, videos, logs, etc.) are referenced in the report by ID rather than embedded directly.
+
+Each attachment in a `RunAttempt` contains:
+
+- `name` - The attachment filename
+- `contentType` - MIME type of the attachment
+- `id` - Unique identifier used to retrieve the actual attachment content. It is recommended to use the MD5 hash of the attachment content as the identifier.
+
+The actual attachment files are stored in the `attachments/` directory alongside the `report.json`, with their `id` as the filename (without extension).
+
+The report JSON and its attachments should be organized as follows:
+
+```
+flakiness-report/
+├── report.json
+└── attachments/
+    ├── 5d41402abc4b2a76b9719d911017c592
+    ├── 7d865e959b2466918c9863afca942d0f
+    └── 9bb58f26192e4ba00f01e2e7b136bbd8
+```
+
+**Important:** Report generators shall not compress attachments manually. The Flakiness.io CLI tool automatically applies optimal compression for different file types during upload.
 
 ## NPM Package
 
