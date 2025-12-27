@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export namespace schema {
+export namespace schemaV1 {
   export const CommitId = z.string().min(40).max(40);
   export const AttachmentId = z.string().min(1).max(1024);
   export const UnixTimestampMS = z.number().min(0);
@@ -29,9 +29,7 @@ export namespace schema {
       osArch: z.string().optional(),
     }).optional(),
 
-    userSuppliedData: z.any().optional(),
-
-    opaqueData: z.any().optional(),
+    metadata: z.any().optional(),
   });
 
   export const STDIOEntry = z.union([
@@ -115,22 +113,24 @@ export namespace schema {
     attempts: z.array(RunAttempt),
   });
 
-  export const SystemUtilizationSample = z.object({
-    dts: DurationMS,
-    // Must be between 0 and 100 (inclusive). Can be a rational number.
-    cpuUtilization: z.number().min(0).max(100),
-    // Must be between 0 and 100 (inclusive). Can be a rational number.
-    memoryUtilization: z.number().min(0).max(100),
+  export const TelemetrySample = z.tuple([DurationMS, z.number().min(0).max(100)]);
+
+  export const RAMUtilization = z.object({
+    startTimestamp: UnixTimestampMS, 
+    totalMemoryBytes: z.number().min(0),
+    telemetry: z.array(TelemetrySample),
   });
 
-  export const SystemUtilization = z.object({
-    totalMemoryBytes: z.number().min(0),
+
+  export const CPUUtilization = z.object({
     startTimestamp: UnixTimestampMS,
-    samples: z.array(SystemUtilizationSample),
+    cpuCount: z.number().min(1),
+    telemetry: z.array(TelemetrySample),
   });
 
   export const Report = z.object({
     category: z.string().min(1).max(100),
+    version: z.literal(1),
     commitId: CommitId,
     relatedCommitIds: z.array(CommitId).optional(),
     configPath: GitFilePath.optional(),
@@ -141,7 +141,7 @@ export namespace schema {
     unattributedErrors: z.array(ReportError).optional(),
     startTimestamp: UnixTimestampMS,
     duration: DurationMS,
-    opaqueData: z.any().optional(),
-    systemUtilization: z.optional(SystemUtilization),
+    cpuUtilization: CPUUtilization.optional(),
+    ramUtilization: RAMUtilization.optional(),
   });
 }

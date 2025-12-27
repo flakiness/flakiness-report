@@ -1,5 +1,5 @@
 import z from 'zod';
-import { schema } from './schema.js';
+import { schemaV1 } from './schemaV1.js';
 
 /**
  * Brands a type by intersecting it with a type with a brand property based on
@@ -9,7 +9,7 @@ type Brand<T, Brand extends string> = T & {
   readonly [B in Brand as `__${B}_brand`]: never;
 };
 
-export namespace FlakinessReport {
+export namespace V1 {
   export type CommitId = Brand<string, 'FlakinessReport.CommitId'>;
   export type AttachmentId = Brand<string, 'FlakinessReport.AttachmentId'>;
   export type UnixTimestampMS = Brand<number, 'FlakinessReport.UnixTimestampMS'>;
@@ -61,7 +61,7 @@ export namespace FlakinessReport {
 
   /**
    * Represents test environment that was used to execute test.
-   * The environment is indexed and searchable, with an opaque non-indexed data attached into `opaqueData`.
+   * The environment is indexed and searchable.
    */
   export type Environment = {
     /**
@@ -85,58 +85,100 @@ export namespace FlakinessReport {
      * - In Playwright world, this might be coming from project's metadata field.
      * - It can also be populated via the FK_ENV_FOO="bar" env variables, setting the "foo: bar" key-value pair.
      */
-    userSuppliedData?: Record<string, string|boolean|number>,
-
-    /**
-     * This is the opaque data that is not indexed and that comes from the test framework. This is NOT INDEXED by FQL.
-     * 
-     * Playwright: this is Playwright's per-project configuration.
-     */
-    opaqueData?: any,
+    metadata?: Record<string, string|boolean|number>,
   }
 
   /**
-   * Represents a single sample of system resource utilization at a point in time.
+   * RAM utilization telemetry data collected during test execution.
+   * Tracks memory usage over time to help identify memory leaks, high memory consumption,
+   * or resource constraints that might affect test stability.
    */
-  export interface SystemUtilizationSample {
+  export interface RAMUtilization {
     /**
-     * Timestamp delta from previous sample timestamp. The very first sample contains delta from
-     * `SystemUtilization.startTimestamp`.
+     * Unix timestamp (ms) when monitoring started.
+     * Essential for placing the telemetry on a real timeline.
      */
-    dts: FlakinessReport.DurationMS,
+    startTimestamp: number; 
+
     /**
-     * A number between 0 and 100 that represents system CPU utilization in percents. Can be rational.
+     * Total system memory in bytes.
+     * Used to calculate absolute memory usage and provide context for utilization percentages.
      */
-    cpuUtilization: number,
+    totalMemoryBytes: number;
+    
     /**
-     * A number between 0 and 100 that represents system memory utilization in percents. Can be rational.
+     * Memory usage samples. Each sample is a tuple representing a telemetry point.
+     * Index 0: Time passed (ms) since the previous sample (delta).
+     * Index 1: Utilization value (0-100), representing percentage of total memory in use.
      */
-    memoryUtilization: number,
+    telemetry: [number, number][];
   }
 
   /**
-   * Represents system resource utilization monitoring data collected during test execution.
+   * CPU utilization telemetry data collected during test execution.
+   * Tracks CPU usage over time to help identify performance bottlenecks, resource contention,
+   * or system load issues that might affect test execution speed and stability.
    */
-  export interface SystemUtilization {
+  export interface CPUUtilization {
     /**
-     * Total system memory in bytes at the start of monitoring.
+     * Number of CPU cores available on the system.
+     * Useful context: Is 100% max utilization 1 core of 4? or 1 of 32?
+     * This helps interpret the utilization percentages correctly.
      */
-    totalMemoryBytes: number,
+    cpuCount: number;
+
     /**
-     * Unix timestamp when monitoring started.
+     * Unix timestamp (ms) when monitoring started.
+     * Essential for placing the telemetry on a real timeline and correlating with test events.
      */
-    startTimestamp: UnixTimestampMS,
+    startTimestamp: number;
+
     /**
-     * Array of utilization samples taken at regular intervals during test execution.
+     * CPU usage samples. Each sample is a tuple representing a telemetry point.
+     * Index 0: Time passed (ms) since the previous sample (delta).
+     * Index 1: Utilization value, across all cores (0-100), where 100% represents full utilization
+     * of all available CPU cores.
      */
-    samples: SystemUtilizationSample[],
+    telemetry: [number, number][];
   }
 
   /**
    * The root report object containing all test execution data.
    */
   export interface Report {
-    version?: undefined;
+    version: 1;
+
+    /**
+     * Optional array of source code files embedded in the report.
+     * These sources provide context for locations referenced throughout the report
+     * (e.g., test definitions, error locations, step locations).
+     * 
+     * This field replaces the deprecated `snippet` fields in `TestStep` and `ReportError`,
+     * allowing for better code navigation and context display in the report viewer.
+     */
+    sources?: {
+      /**
+       * File path of the source file, relative to git checkout (unix-based).
+       * This should match the `file` field in `Location` objects that reference this source.
+       */
+      filePath: GitFilePath,
+      /**
+       * MIME type of the source file content (e.g., 'text/javascript', 'text/typescript', 'text/python').
+       * Used by the report viewer for syntax highlighting and proper rendering.
+       */
+      contentType: string;
+      /**
+       * The actual source code content of the file.
+       * Can be the full file content or a partial excerpt (see `lineOffset`).
+       */
+      text: string,
+      /**
+       * Optional line offset indicating the starting line number if only a portion of the file is included.
+       * For example, if `lineOffset` is 10, then the first line of `text` corresponds to line 10 of the original file.
+       * If omitted, the content is assumed to start at line 1.
+       */
+      lineOffset?: number,
+    }[],
 
     /**
      * Report category identifier (e.g., 'playwright', 'junit', 'perf').
@@ -200,18 +242,25 @@ export namespace FlakinessReport {
     duration: DurationMS;
 
     /**
-     * Opaque data that is attached to the report.
-     * This data is not indexed or validated by the schema.
-     * 
-     * Playwright: this is Playwright's configuration.
+     * Average CPU utilization during test execution.
+     * Represents general system load and helps identify sustained high CPU usage
+     * that might indicate resource constraints or inefficient test execution.
      */
-    opaqueData?: any,
+    cpuAvg?: CPUUtilization;
 
     /**
-     * System resource utilization data collected during test execution.
-     * Includes CPU and memory usage samples taken at regular intervals.
+     * Peak CPU utilization during test execution.
+     * Used for bottleneck detection to identify moments of maximum CPU stress
+     * that could cause test timeouts or flakiness.
      */
-    systemUtilization?: SystemUtilization,
+    cpuMax?: CPUUtilization;
+
+    /**
+     * RAM utilization during test execution.
+     * Tracks memory usage over time to help identify memory leaks, excessive memory consumption,
+     * or insufficient memory that might cause test failures or instability.
+     */
+    ram?: RAMUtilization;
   }
 
   /**
@@ -399,6 +448,7 @@ export namespace FlakinessReport {
     location?: Location;
     /**
      * Optional code snippet showing the step implementation.
+     * @deprecated attach a source to top-level `sources` field instead.
      */
     snippet?: string;
     /**
@@ -437,6 +487,7 @@ export namespace FlakinessReport {
 
     /**
      * Code snippet showing the context around where the error occurred.
+     * @deprecated attach a source to top-level `sources` field instead.
      */
     snippet?: string;
 
@@ -454,7 +505,7 @@ export namespace FlakinessReport {
    * @returns A formatted error string if validation fails, or `undefined` if the report is valid
    */
   export function validate(report: Report): string|undefined {
-    const validation = schema.Report.safeParse(report);
+    const validation = schemaV1.Report.safeParse(report);
     if (!validation.success) {
       const MAX_ISSUES = 5;
 
@@ -470,4 +521,3 @@ export namespace FlakinessReport {
     return undefined;
   }
 }
-
