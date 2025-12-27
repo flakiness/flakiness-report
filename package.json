@@ -8,7 +8,9 @@
   "private": false,
   "scripts": {
     "build": "npx kubik ./build.mts",
-    "watch": "npx kubik ./build.mts --watch"
+    "watch": "npx kubik ./build.mts --watch",
+    "minor": "./version.mjs minor",
+    "patch": "./version.mjs patch"
   },
   "exports": {
     ".": {
