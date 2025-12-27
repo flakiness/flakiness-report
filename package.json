@@ -12,9 +12,14 @@
   },
   "exports": {
     ".": {
-      "types": "./types/src/flakinessReport.d.ts",
-      "import": "./lib/flakinessReport.js",
-      "require": "./lib/flakinessReport.js"
+      "types": "./types/src/index.d.ts",
+      "import": "./lib/index.js",
+      "require": "./lib/index.js"
+    },
+    "./v0": {
+      "types": "./types/src/v0/flakinessReport.d.ts",
+      "import": "./lib/v0/flakinessReport.js",
+      "require": "./lib/v0/flakinessReport.js"
     }
   },
   "type": "module",

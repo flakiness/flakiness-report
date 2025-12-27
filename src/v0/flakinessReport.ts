@@ -136,6 +136,8 @@ export namespace FlakinessReport {
    * The root report object containing all test execution data.
    */
   export interface Report {
+    version?: undefined;
+
     /**
      * Report category identifier (e.g., 'playwright', 'junit', 'perf').
      * See `CATEGORY_*` constants for predefined categories.
