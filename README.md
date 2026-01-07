@@ -42,9 +42,8 @@ Learn more in the [official documentation](https://flakiness.io/docs/cli/).
 
 ### JSON format
 
-- [JSON format explainer](./src/flakinessReport.ts) - JSON format explainer in a form
-  of a TypeScript type
-- [Zod schema](./src/schema.ts) - JSON format validator as a Zod schema
+- [TypeScript definitions](./src/flakinessReport.ts) - report structure as TypeScript types with inline documentation
+- [Zod schema](./src/schema.ts) - runtime validator for report JSON
 
 > **💡 Tip:** The TypeScript type definitions include extensive inline comments that describe each entity and field in detail. Be sure to read through the comments in `flakinessReport.ts` for a comprehensive understanding of the report format structure.
 
@@ -61,6 +60,7 @@ flakiness-report/
 
 ```json
 {
+  "version": 1,
   "category": "pytest",
   "commitId": "a1b2c3d4e5f6789012345678901234567890abcd",
   "environments": [
@@ -103,23 +103,23 @@ flakiness-report/
 
 1. **File Paths**
     All file paths within the report are POSIX-formatted paths relative to the repository root, regardless of the platform on which tests are executed.
-1. **Test**
+2. **Test**
     A test represents a specific location in the source code.
-2. **Suite**
+3. **Suite**
     A suite is a logical grouping of tests. Suites can be of various types and may have associated file locations.
-3. **Environment**
+4. **Environment**
     An environment is a set of key-value pairs that describe the execution context. Environments capture information about the operating system, browser, and other testing properties.
-4. **Run Attempts**
+5. **Run Attempts**
     A run attempt represents a single execution of a test within a specific environment. When test runners automatically retry failed tests, each retry is recorded as a separate run attempt for the same test in the same environment.
-5. **Test Statuses**
+6. **Test Statuses**
     Each run attempt has both an actual status and an expected status. The expected status is typically `passed`, but some test runners allow marking tests as expected to fail, in which case the expected status is `failed`.
 
     The Flakiness Report viewer supports filtering reports by status.
-6. **Test Tags**
+7. **Test Tags**
     Test tags are case-insensitive markers assigned to tests. Tags are static and cannot be dynamically attached during test execution; they are typically modified only when source code changes. Common examples include `smoke`, `e2e`, and `regression`.
 
     The Flakiness Report viewer supports filtering reports by tags.
-7. **Annotations**
+8. **Annotations**
     Annotations are metadata attached to individual run attempts, unlike tags which are attached to tests themselves. Annotations are dynamic and can vary across different test executions.
     
     Each annotation has a type and a description. Common use cases include:
@@ -127,9 +127,8 @@ flakiness-report/
     - `owner` annotations to assign ownership of specific tests
 
     The Flakiness Report viewer supports filtering by annotations.
-8. **Attachments**
-    Each run attempt might also have an attachment: a screenshots, video, log, or
-    any other piece of debugging information that is referenced by ID. Actual attachment contents are stored on the file system, following the directory layout explained in the "Attachments" section.
+9. **Attachments**
+    Each run attempt can have attachments: screenshots, videos, logs, or other debugging artifacts referenced by ID. Actual attachment contents are stored on the file system, following the directory layout explained in the "Attachments" section.
 
 ### Attachments
 
@@ -137,7 +136,7 @@ Attachments (screenshots, videos, logs, etc.) are referenced in the report by ID
 
 Each attachment in a `RunAttempt` contains:
 
-- `name` - The attachment filename
+- `name` - Descriptive name of the attachment (often the filename)
 - `contentType` - MIME type of the attachment
 - `id` - Unique identifier used to retrieve the actual attachment content. It is recommended to use the MD5 hash of the attachment content as the identifier.
 
