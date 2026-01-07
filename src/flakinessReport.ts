@@ -62,14 +62,16 @@ export namespace FlakinessReport {
    */
   export type Environment = {
     /**
-     * In Playwright world, there are so-called "projects": a way to run the same tests in different configurations and
-     * generate a single report for them. These projects might have names, and this is where it might come.
-     * If there's no name, then some other one must be provided instead.
+     * Environment name.
+     * In Playwright, "projects" allow running the same tests in different configurations
+     * and generating a single report; the project name is typically used here.
+     * If no project name is available, provide another meaningful identifier.
      */
     name: string,
 
     /**
-     * System data is automatically collected by test reporter. This is indexed by the FQL.
+     * System data automatically collected by the test reporter.
+     * This data is indexed and queryable via the Flakiness Query Language (FQL).
      */
     systemData?: {
       osName?: string,
@@ -136,14 +138,14 @@ export namespace FlakinessReport {
   type Percent = number;
 
   /**
-   * Telmetry is an array that encodes a variation of certain value in time.
-   * The very first tuple has the format:
-   * - Index 0: Unix timestamp (ms) when telemetry started
-   * - Index 1: Tracked value 
-   * 
-   * Every other tuple has the format:
-   * - Index 0: Time passed (ms) since the previous sample (delta).
-   * - Index 1: Tracked value
+   * A time series encoded as an array of `[timestamp, value]` tuples.
+   *
+   * To save space, timestamps use delta encoding:
+   * - **First tuple**: `[absoluteTimestamp, value]` — Unix timestamp in ms
+   * - **Subsequent tuples**: `[deltaMs, value]` — milliseconds since the previous sample
+   *
+   * Example: `[[1704067200000, 25], [1000, 30], [1000, 28]]`
+   * represents values 25, 30, 28 sampled at times T, T+1s, T+2s.
    */
   export type Telemetry<VALUE> = [number, VALUE][];
 
@@ -231,7 +233,7 @@ export namespace FlakinessReport {
     suites?: Suite[];
 
     /**
-     * Root test in the report - these do not belong to any suite.
+     * Root tests in the report that do not belong to any suite.
      */
     tests?: Test[];
 
@@ -265,26 +267,17 @@ export namespace FlakinessReport {
     cpuCount?: number,
 
     /**
-     * Average CPU utilization during test execution.
-     * Represents general system load and helps identify sustained high CPU usage
-     * that might indicate resource constraints or inefficient test execution.
-     * Encodes percentage of avg cpu utilization across all CPUs.
+     * Average CPU utilization (0–100%) across all cores, sampled over time.
      */
     cpuAvg?: Telemetry<Percent>;
 
     /**
-     * Peak CPU utilization during test execution.
-     * Used for bottleneck detection to identify moments of maximum CPU stress
-     * that could cause test timeouts or flakiness.
-     * Encodes percentage of max cpu utilization.
+     * Peak CPU utilization (0–100%) of the busiest core, sampled over time.
      */
     cpuMax?: Telemetry<Percent>;
 
     /**
-     * RAM utilization during test execution.
-     * Tracks memory usage over time to help identify memory leaks, excessive memory consumption,
-     * or insufficient memory that might cause test failures or instability.
-     * Encodes percentage of total memory in use.
+     * RAM utilization (0–100%) as a percentage of `ramBytes`, sampled over time.
      */
     ram?: Telemetry<Percent>;
 
@@ -382,7 +375,7 @@ export namespace FlakinessReport {
    */
   export interface Attachment {
     /**
-     * Filename of the attachment.
+     * Descriptive name of the attachment (often the filename).
      */
     name: string;
     /**
@@ -508,7 +501,7 @@ export namespace FlakinessReport {
   }
 
   /**
-   * If the entry is a binary data, then it is base64-encoded in "buffer"; otherwise, it's a text entry.
+   * If the entry is binary data, it is base64-encoded in "buffer"; otherwise, it's a text entry.
    */
   export type STDIOEntry = { text: string } | { buffer: string };
 
@@ -522,12 +515,12 @@ export namespace FlakinessReport {
     location?: Location;
 
     /**
-     * Error message. Set when [Error] (or its subclass) has been thrown.
+     * Error message. Set when an Error (or subclass) has been thrown.
      */
     message?: string;
 
     /**
-     * Error stack trace. Set when [Error] (or its subclass) has been thrown.
+     * Error stack trace. Set when an Error (or subclass) has been thrown.
      */
     stack?: string;
 
@@ -539,7 +532,7 @@ export namespace FlakinessReport {
 
     /**
      * String representation of the value that was thrown.
-     * Set when anything except [Error] (or its subclass) has been thrown.
+     * Set when anything except an Error (or subclass) has been thrown.
      */
     value?: string;
   }
