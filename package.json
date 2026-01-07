@@ -25,11 +25,12 @@
   "keywords": [],
   "author": "Degu Labs, Inc",
   "license": "MIT",
-  "dependencies": {
+  "peedDependencies": {
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
+    "zod": "^4.1.12",
     "esbuild": "^0.27.0",
     "kubik": "^0.24.0",
     "tsx": "^4.20.6",

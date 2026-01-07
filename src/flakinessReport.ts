@@ -97,6 +97,7 @@ export namespace FlakinessReport {
 
   /**
    * Represents a single sample of system resource utilization at a point in time.
+   * @deprecated Use CPUUtilization and RAMUtilization instead.
    */
   export interface SystemUtilizationSample {
     /**
@@ -116,6 +117,7 @@ export namespace FlakinessReport {
 
   /**
    * Represents system resource utilization monitoring data collected during test execution.
+   * @deprecated Use CPUUtilization and RAMUtilization instead.
    */
   export interface SystemUtilization {
     /**
