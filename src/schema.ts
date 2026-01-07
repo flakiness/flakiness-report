@@ -137,7 +137,7 @@ export namespace Schema {
     configPath: GitFilePath.optional(),
     url: z.string().optional(),
     environments: z.array(Environment),
-    suites: z.array(Suite),
+    suites: z.array(Suite).optional(),
     tests: z.array(Test).optional(),
     unattributedErrors: z.array(ReportError).optional(),
     startTimestamp: UnixTimestampMS,

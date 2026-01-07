@@ -229,7 +229,7 @@ export namespace FlakinessReport {
     /**
      * Root test suites in the report. Suites can be nested and contain both sub-suites and tests.
      */
-    suites: Suite[];
+    suites?: Suite[];
 
     /**
      * Root test in the report - these do not belong to any suite.
