@@ -142,6 +142,31 @@ export namespace V1 {
     telemetry: [number, number][];
   }
 
+  export interface Source {
+    /**
+     * File path of the source file, relative to git checkout (unix-based).
+     * This should match the `file` field in `Location` objects that reference this source.
+     */
+    filePath: GitFilePath,
+    /**
+     * Optional MIME type of the source file content (e.g., 'text/javascript', 'text/typescript', 'text/python').
+     * Used by the report viewer for syntax highlighting and proper rendering.
+     * If undefined, then Report viewer will try to guess mime type from file path.
+     */
+    contentType?: string;
+    /**
+     * The actual source code content of the file.
+     * Can be the full file content or a partial excerpt (see `lineOffset`).
+     */
+    text: string,
+    /**
+     * Optional line offset indicating the starting line number if only a portion of the file is included.
+     * For example, if `lineOffset` is 10, then the first line of `text` corresponds to line 10 of the original file.
+     * If omitted, the content is assumed to start at line 1.
+     */
+    lineOffset?: number,
+  }
+
   /**
    * The root report object containing all test execution data.
    */
@@ -156,29 +181,7 @@ export namespace V1 {
      * This field replaces the deprecated `snippet` fields in `TestStep` and `ReportError`,
      * allowing for better code navigation and context display in the report viewer.
      */
-    sources?: {
-      /**
-       * File path of the source file, relative to git checkout (unix-based).
-       * This should match the `file` field in `Location` objects that reference this source.
-       */
-      filePath: GitFilePath,
-      /**
-       * MIME type of the source file content (e.g., 'text/javascript', 'text/typescript', 'text/python').
-       * Used by the report viewer for syntax highlighting and proper rendering.
-       */
-      contentType: string;
-      /**
-       * The actual source code content of the file.
-       * Can be the full file content or a partial excerpt (see `lineOffset`).
-       */
-      text: string,
-      /**
-       * Optional line offset indicating the starting line number if only a portion of the file is included.
-       * For example, if `lineOffset` is 10, then the first line of `text` corresponds to line 10 of the original file.
-       * If omitted, the content is assumed to start at line 1.
-       */
-      lineOffset?: number,
-    }[],
+    sources?: Source[],
 
     /**
      * Report category identifier (e.g., 'playwright', 'junit', 'perf').
