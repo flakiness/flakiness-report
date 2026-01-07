@@ -221,8 +221,7 @@ export namespace FlakinessReport {
 
     /**
      * List of all environments that were used to run tests.
-     * In Playwright world, a single config file might define multiple projects; each of these projects
-     * becomes an environment entry in this array.
+     * At least one environment must be present in this list for the report to be valid.
      */
     environments: Environment[];
 
@@ -402,24 +401,32 @@ export namespace FlakinessReport {
   export interface RunAttempt {
     /**
      * Index of the environment in the report's `environments` array used for this attempt.
+     * Defaults to `0`.
      */
-    environmentIdx: number;
+    environmentIdx?: number;
+
     /**
      * Expected status for this test (what the test was supposed to do).
+     * Defaults to `passed` if not defined.
      */
-    expectedStatus: TestStatus;
+    expectedStatus?: TestStatus;
+
     /**
      * Actual status that resulted from this test execution.
+     * Defaults to `passed` if not defined.
      */
-    status: TestStatus;
+    status?: TestStatus;
+
     /**
      * Unix timestamp (in milliseconds) when this test attempt started.
      */
     startTimestamp: UnixTimestampMS;
+
     /**
      * Duration of this test attempt in milliseconds.
+     * Defaults to `0` if not defined.
      */
-    duration: DurationMS;
+    duration?: DurationMS;
 
     /**
      * Maximum allowed duration (timeout) for this test attempt in milliseconds.
@@ -470,23 +477,30 @@ export namespace FlakinessReport {
      * Human-readable title describing what this step does.
      */
     title: string;
+
     /**
      * Duration of this step in milliseconds.
+     * Defaults to `0`.
      */
-    duration: DurationMS;
+    duration?: DurationMS;
+
     /**
      * Optional source location where this step was defined or executed.
      */
+
     location?: Location;
+
     /**
      * Optional code snippet showing the step implementation.
      * @deprecated attach a source to top-level `sources` field instead.
      */
     snippet?: string;
+
     /**
      * Optional error that occurred during this step execution.
      */
     error?: ReportError;
+
     /**
      * Nested sub-steps within this step.
      */

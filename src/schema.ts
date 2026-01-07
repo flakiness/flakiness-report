@@ -54,7 +54,7 @@ export namespace Schema {
 
   export const TestStep = z.object({
     title: z.string(),
-    duration: DurationMS,
+    duration: DurationMS.optional(),
     location: Location.optional(),
     snippet: z.string().optional(),
     error: ReportError.optional(),
@@ -77,12 +77,12 @@ export namespace Schema {
 
   export const RunAttempt = z.object({
     // Index of the environment in the environments array (must be >= 0).
-    environmentIdx: z.number().min(0),
+    environmentIdx: z.number().min(0).optional(),
 
-    expectedStatus: TestStatus,
-    status: TestStatus,
+    expectedStatus: TestStatus.optional(),
+    status: TestStatus.optional(),
     startTimestamp: UnixTimestampMS,
-    duration: DurationMS,
+    duration: DurationMS.optional(),
 
     timeout: DurationMS.optional(),
 
@@ -136,7 +136,7 @@ export namespace Schema {
     relatedCommitIds: z.array(CommitId).optional(),
     configPath: GitFilePath.optional(),
     url: z.string().optional(),
-    environments: z.array(Environment),
+    environments: z.array(Environment).min(1),
     suites: z.array(Suite).optional(),
     tests: z.array(Test).optional(),
     unattributedErrors: z.array(ReportError).optional(),
