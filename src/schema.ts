@@ -29,9 +29,8 @@ export namespace Schema {
       osArch: z.string().optional(),
     }).optional(),
 
+    metadata: z.any().optional(),
     userSuppliedData: z.any().optional(),
-
-    opaqueData: z.any().optional(),
   });
 
   export const STDIOEntry = z.union([
@@ -122,15 +121,17 @@ export namespace Schema {
     // Must be between 0 and 100 (inclusive). Can be a rational number.
     memoryUtilization: z.number().min(0).max(100),
   });
-
   export const SystemUtilization = z.object({
     totalMemoryBytes: z.number().min(0),
     startTimestamp: UnixTimestampMS,
     samples: z.array(SystemUtilizationSample),
   });
 
+  export const UtilizationTelemetry = z.tuple([DurationMS, z.number().min(0).max(100)]);
+
   export const Report = z.object({
     category: z.string().min(1).max(100),
+    version: z.literal(1),
     commitId: CommitId,
     relatedCommitIds: z.array(CommitId).optional(),
     configPath: GitFilePath.optional(),
@@ -141,7 +142,11 @@ export namespace Schema {
     unattributedErrors: z.array(ReportError).optional(),
     startTimestamp: UnixTimestampMS,
     duration: DurationMS,
-    opaqueData: z.any().optional(),
     systemUtilization: z.optional(SystemUtilization),
+    cpuCount: z.number().min(0).optional(),
+    cpuAvg: z.array(UtilizationTelemetry).optional(),
+    cpuMax: z.array(UtilizationTelemetry).optional(),
+    ram: z.array(UtilizationTelemetry).optional(),
+    ramBytes: z.number().min(0).optional(),
   });
 }

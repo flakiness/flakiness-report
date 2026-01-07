@@ -58,7 +58,7 @@ export namespace FlakinessReport {
 
   /**
    * Represents test environment that was used to execute test.
-   * The environment is indexed and searchable, with an opaque non-indexed data attached into `opaqueData`.
+   * The environment is indexed and searchable.
    */
   export type Environment = {
     /**
@@ -78,18 +78,19 @@ export namespace FlakinessReport {
     },
 
     /**
-     * User-supplied data is the data that is supplied by users. This is indexed by the FQL.
-     * - In Playwright world, this might be coming from project's metadata field.
-     * - It can also be populated via the FK_ENV_FOO="bar" env variables, setting the "foo: bar" key-value pair.
+     * @deprecated Please use `metadata` instead.
      */
     userSuppliedData?: Record<string, string|boolean|number>,
 
     /**
-     * This is the opaque data that is not indexed and that comes from the test framework. This is NOT INDEXED by FQL.
-     * 
-     * Playwright: this is Playwright's per-project configuration.
+     * Metadata that defines execution environment. See
+     * https://flakiness.io/docs/concepts/environments/ for details.
+     *
+     * By convention, report generators should parse environment variables and
+     * record `FK_ENV_*` as metadata. For example, the `FK_ENV_FOO=bar` should
+     * be recorded as `foo: "bar"` in the metadata.
      */
-    opaqueData?: any,
+    metadata?: Record<string, string|boolean|number>,
   }
 
   /**
@@ -130,10 +131,65 @@ export namespace FlakinessReport {
   }
 
   /**
+   * Number between 0 and 100 representing percentage.
+   */
+  type Percent = number;
+
+  /**
+   * Telmetry is an array that encodes a variation of certain value in time.
+   * The very first tuple has the format:
+   * - Index 0: Unix timestamp (ms) when telemetry started
+   * - Index 1: Tracked value 
+   * 
+   * Every other tuple has the format:
+   * - Index 0: Time passed (ms) since the previous sample (delta).
+   * - Index 1: Tracked value
+   */
+  export type Telemetry<VALUE> = [number, VALUE][];
+
+  export interface Source {
+    /**
+     * File path of the source file, relative to git checkout (unix-based).
+     * This should match the `file` field in `Location` objects that reference this source.
+     */
+    filePath: GitFilePath,
+
+    /**
+     * The actual source code content of the file.
+     * Can be the full file content or a partial excerpt (see `lineOffset`).
+     */
+    text: string,
+
+    /**
+     * Optional line offset indicating the starting line number if only a portion of the file is included.
+     * For example, if `lineOffset` is 10, then the first line of `text` corresponds to line 10 of the original file.
+     * If omitted, the content is assumed to start at line 1.
+     */
+    lineOffset?: number,
+
+    /**
+     * Optional MIME type of the source file content (e.g., 'text/javascript', 'text/typescript', 'text/python').
+     * Used by the report viewer for syntax highlighting and proper rendering.
+     * If undefined, then Report viewer will try to guess mime type from file path.
+     */
+    contentType?: string;
+  }
+
+  /**
    * The root report object containing all test execution data.
    */
   export interface Report {
-    version?: undefined;
+    version: 1;
+
+    /**
+     * Optional array of source code files embedded in the report.
+     * These sources provide context for locations referenced throughout the report
+     * (e.g., test definitions, error locations, step locations).
+     * 
+     * This field replaces the deprecated `snippet` fields in `TestStep` and `ReportError`,
+     * allowing for better code navigation and context display in the report viewer.
+     */
+    sources?: Source[],
 
     /**
      * Report category identifier (e.g., 'playwright', 'junit', 'perf').
@@ -190,25 +246,53 @@ export namespace FlakinessReport {
      * Unix timestamp (in milliseconds) when test execution started.
      */
     startTimestamp: UnixTimestampMS;
-    
+
     /**
      * Total duration of test execution in milliseconds.
      */
     duration: DurationMS;
 
     /**
-     * Opaque data that is attached to the report.
-     * This data is not indexed or validated by the schema.
-     * 
-     * Playwright: this is Playwright's configuration.
-     */
-    opaqueData?: any,
-
-    /**
      * System resource utilization data collected during test execution.
      * Includes CPU and memory usage samples taken at regular intervals.
+     * @deprecated Please use `cpuAvg`, `cpuMax` and `ram` instead to report
+     * system telemetry.
      */
     systemUtilization?: SystemUtilization,
+
+    /**
+     * Number of CPUs on the system.
+     */
+    cpuCount?: number,
+
+    /**
+     * Average CPU utilization during test execution.
+     * Represents general system load and helps identify sustained high CPU usage
+     * that might indicate resource constraints or inefficient test execution.
+     * Encodes percentage of avg cpu utilization across all CPUs.
+     */
+    cpuAvg?: Telemetry<Percent>;
+
+    /**
+     * Peak CPU utilization during test execution.
+     * Used for bottleneck detection to identify moments of maximum CPU stress
+     * that could cause test timeouts or flakiness.
+     * Encodes percentage of max cpu utilization.
+     */
+    cpuMax?: Telemetry<Percent>;
+
+    /**
+     * RAM utilization during test execution.
+     * Tracks memory usage over time to help identify memory leaks, excessive memory consumption,
+     * or insufficient memory that might cause test failures or instability.
+     * Encodes percentage of total memory in use.
+     */
+    ram?: Telemetry<Percent>;
+
+    /**
+     * Total system memory in bytes.
+     */
+    ramBytes?: number;
   }
 
   /**
@@ -396,6 +480,7 @@ export namespace FlakinessReport {
     location?: Location;
     /**
      * Optional code snippet showing the step implementation.
+     * @deprecated attach a source to top-level `sources` field instead.
      */
     snippet?: string;
     /**
@@ -434,6 +519,7 @@ export namespace FlakinessReport {
 
     /**
      * Code snippet showing the context around where the error occurred.
+     * @deprecated attach a source to top-level `sources` field instead.
      */
     snippet?: string;
 
@@ -444,4 +530,3 @@ export namespace FlakinessReport {
     value?: string;
   }
 }
-
