@@ -181,8 +181,6 @@ export namespace FlakinessReport {
    * The root report object containing all test execution data.
    */
   export interface Report {
-    version: 1;
-
     /**
      * Optional array of source code files embedded in the report.
      * These sources provide context for locations referenced throughout the report

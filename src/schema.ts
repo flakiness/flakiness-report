@@ -131,7 +131,6 @@ export namespace Schema {
 
   export const Report = z.object({
     category: z.string().min(1).max(100),
-    version: z.literal(1),
     commitId: CommitId,
     relatedCommitIds: z.array(CommitId).optional(),
     configPath: GitFilePath.optional(),
