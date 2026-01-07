@@ -168,14 +168,14 @@ npm install @flakiness/flakiness-report
 The package provides a simple validation utility for the reports.
 
 ```typescript
-import { FlakinessReport } from '@flakiness/flakiness-report';
+import { FlakinessReport, validateReport } from '@flakiness/flakiness-report';
 
 // Type-safe report handling
 const report: FlakinessReport.Report = { /* ... */ };
 
-const validation = FlakinessSchema.validate(report);
-if (!validation.success)
-  console.error(`Validation failed:`, z.prettifyError(validation.error));
+const validationError = validateReport(report);
+if (validationError)
+  console.error(`Validation failed:`, validationError);
 ```
 
 ## Development

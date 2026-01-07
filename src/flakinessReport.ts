@@ -1,6 +1,3 @@
-import z from 'zod';
-import { schemaV0 } from './schemaV0.js';
-
 /**
  * Brands a type by intersecting it with a type with a brand property based on
  * the provided brand string.
@@ -9,7 +6,7 @@ type Brand<T, Brand extends string> = T & {
   readonly [B in Brand as `__${B}_brand`]: never;
 };
 
-export namespace V0 {
+export namespace FlakinessReport {
   export type CommitId = Brand<string, 'FlakinessReport.CommitId'>;
   export type AttachmentId = Brand<string, 'FlakinessReport.AttachmentId'>;
   export type UnixTimestampMS = Brand<number, 'FlakinessReport.UnixTimestampMS'>;
@@ -445,29 +442,6 @@ export namespace V0 {
      * Set when anything except [Error] (or its subclass) has been thrown.
      */
     value?: string;
-  }
-
-  /**
-   * Validates a report object against the Flakiness Report schema.
-   *
-   * @param report - The report object to validate
-   * @returns A formatted error string if validation fails, or `undefined` if the report is valid
-   */
-  export function validate(report: Report): string|undefined {
-    const validation = schemaV0.Report.safeParse(report);
-    if (!validation.success) {
-      const MAX_ISSUES = 5;
-
-      const allIssues = validation.error.issues;
-      const shownIssues = allIssues.slice(0, MAX_ISSUES);
-      const remaining = allIssues.length - shownIssues.length;
-
-      const base = [z.prettifyError(new z.ZodError(shownIssues))];
-      if (remaining > 0)
-        base.push(`... and ${remaining} more issue${remaining === 1 ? '' : 's'} ...`);
-      return base.join('\n');
-    }
-    return undefined;
   }
 }
 

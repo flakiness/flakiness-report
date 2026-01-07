@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export namespace schemaV0 {
+export namespace Schema {
   export const CommitId = z.string().min(40).max(40);
   export const AttachmentId = z.string().min(1).max(1024);
   export const UnixTimestampMS = z.number().min(0);
