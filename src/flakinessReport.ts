@@ -26,10 +26,6 @@ export namespace FlakinessReport {
    * Report category for JUnit test reports.
    */
   export const CATEGORY_JUNIT = 'junit';
-  /**
-   * Report category for performance test reports.
-   */
-  export const CATEGORY_PERF = 'perf';
 
   /**
    * Represents a location in the source code.
