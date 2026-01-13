@@ -60,7 +60,6 @@ flakiness-report/
 
 ```json
 {
-  "version": 1,
   "category": "pytest",
   "commitId": "a1b2c3d4e5f6789012345678901234567890abcd",
   "environments": [

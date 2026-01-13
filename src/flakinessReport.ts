@@ -36,7 +36,7 @@ export namespace FlakinessReport {
    */
   export interface Location {
     /**
-     * Path to the source file, relative to git checkout, unix-based.
+     * Path to the source file, relative to the repository root (using forward slashes).
      */
     file: GitFilePath;
 
@@ -57,8 +57,7 @@ export namespace FlakinessReport {
   export type TestStatus = 'passed' | 'failed' | 'timedOut' | 'skipped' | 'interrupted';
 
   /**
-   * Represents test environment that was used to execute test.
-   * The environment is indexed and searchable.
+   * Represents the test environment used to execute a test.
    */
   export type Environment = {
     /**
@@ -106,11 +105,11 @@ export namespace FlakinessReport {
      */
     dts: DurationMS,
     /**
-     * A number between 0 and 100 that represents system CPU utilization in percents. Can be rational.
+     * System CPU utilization as a percentage (0–100). Can be a decimal.
      */
     cpuUtilization: number,
     /**
-     * A number between 0 and 100 that represents system memory utilization in percents. Can be rational.
+     * System memory utilization as a percentage (0–100). Can be a decimal.
      */
     memoryUtilization: number,
   }
@@ -174,7 +173,7 @@ export namespace FlakinessReport {
     /**
      * Optional MIME type of the source file content (e.g., 'text/javascript', 'text/typescript', 'text/python').
      * Used by the report viewer for syntax highlighting and proper rendering.
-     * If undefined, then Report viewer will try to guess mime type from file path.
+     * If omitted, the report viewer will infer the MIME type from the file path.
      */
     contentType?: string;
   }
@@ -211,8 +210,7 @@ export namespace FlakinessReport {
     relatedCommitIds?: CommitId[],
 
     /**
-     * Root configuration file that was used to run tests.
-     * In Playwright world, this is the path to the `playwright.config.ts` file, if any.
+     * Root configuration file used to run the tests.
      */
     configPath?: GitFilePath;
 
@@ -289,9 +287,9 @@ export namespace FlakinessReport {
 
   /**
    * Type of test suite.
-   * - 'file': Suite represents a test file
-   * - 'anonymous suite': Suite without a corresponding source location
-   * - 'suite': Regular nested suite within a file
+   * - 'file': Suite representing a test file
+   * - 'suite': Named suite defined in source code (e.g., `describe` block)
+   * - 'anonymous suite': Unnamed grouping without a corresponding source definition
    */
   export type SuiteType = 'file' | 'anonymous suite' | 'suite';
 
@@ -399,14 +397,15 @@ export namespace FlakinessReport {
     environmentIdx?: number;
 
     /**
-     * Expected status for this test (what the test was supposed to do).
-     * Defaults to `passed` if not defined.
+     * The status the test was expected to have.
+     * Typically `passed`, but can be `failed` for tests marked as "expected to fail".
+     * Defaults to `passed`.
      */
     expectedStatus?: TestStatus;
 
     /**
-     * Actual status that resulted from this test execution.
-     * Defaults to `passed` if not defined.
+     * The actual outcome of this test execution.
+     * Defaults to `passed`.
      */
     status?: TestStatus;
 
@@ -432,8 +431,8 @@ export namespace FlakinessReport {
 
     /**
      * All errors that occurred during test execution.
-     * In typical tests, there might be only one error.
-     * However, in Playwright world, there might be soft errors, and these will be here as well.
+     * Most tests have at most one error, but frameworks like Playwright support
+     * "soft" assertions that record errors without immediately failing the test.
      */
     errors?: ReportError[];
 
@@ -480,7 +479,6 @@ export namespace FlakinessReport {
     /**
      * Optional source location where this step was defined or executed.
      */
-
     location?: Location;
 
     /**
@@ -526,7 +524,9 @@ export namespace FlakinessReport {
 
     /**
      * Code snippet showing the context around where the error occurred.
-     * @deprecated attach a source to top-level `sources` field instead.
+     * Some test runners include ANSI-highlighted snippets that match the error message styling;
+     * when available, this field preserves that formatted output.
+     * If not provided, consumers should fall back to the `sources` field.
      */
     snippet?: string;
 
