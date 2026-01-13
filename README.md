@@ -2,8 +2,6 @@
 
 Official specification for the [Flakiness.io](https://flakiness.io) report format.
 
-The Flakiness Report format was inspired by the Playwright Test report format and extends it to support comprehensive test execution analysis across multiple environments.
-
 In a nutshell, *Flakiness Report* is a **JSON file** that follows this
 specification. Oftentimes, this JSON file is accompanied by a set of files -
 *attachments*. This format defines a standardized file system layout for storing these test artifacts.
@@ -14,15 +12,12 @@ This repository contains:
 - [**Zod schema validation**](./src/schema.ts) for runtime validation of report JSON
 - Directory layout to store report and its attachments on file system
 
-## Features
+## Design Goals
 
-The Flakiness Report format supports:
-
-- **Test Tags** - Categorize tests using custom tags
-- **Test Annotations** - Attach metadata and annotations to test runs
-- **Multiple Errors per Test** - Capture all errors including soft errors that don't fail the test
-- **System Monitoring** - Track CPU and RAM utilization during test execution with time-series sampling
-- **Multiple Execution Environments** - Run the same tests across different configurations (OS, browser, project settings) in a single report
+- **Portability**: Generate and process reports on any platform combination without compatibility issues.
+- **Scalability**: Efficiently store tens of thousands of test results using attachment references.
+- **Simplicity**: Standard JSON format that's easy to parse and work with in any language or tool.
+- **Flexibility**: Supports diverse testing framework features: tags, annotations, multiple errors, attachments, and execution environments.
 
 ## Usage
 
