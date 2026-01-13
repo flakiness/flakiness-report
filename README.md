@@ -21,6 +21,8 @@ This repository contains:
 
 ## Usage
 
+The easiest way to generate a Flakiness JSON Report is to use one of the Flakiness.io integrations: https://flakiness.io/docs/integrations/overview/
+
 Once you have a `flakiness-report` on the file system, you can view & upload it
 using the [Flakiness CLI Tool](https://flakiness.io/docs/cli/):
 
