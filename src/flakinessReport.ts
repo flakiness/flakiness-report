@@ -58,9 +58,10 @@ export namespace FlakinessReport {
   export type Environment = {
     /**
      * Environment name.
-     * In Playwright, "projects" allow running the same tests in different configurations
-     * and generating a single report; the project name is typically used here.
-     * If no project name is available, provide another meaningful identifier.
+     * Many test frameworks support running tests in multiple configurations
+     * and generating a single report (e.g., Playwright projects, pytest parameterization,
+     * JUnit test suites with different runners). The configuration name is typically used here.
+     * If no configuration name is available, provide another meaningful identifier.
      */
     name: string,
 
@@ -427,8 +428,9 @@ export namespace FlakinessReport {
 
     /**
      * All errors that occurred during test execution.
-     * Most tests have at most one error, but frameworks like Playwright support
-     * "soft" assertions that record errors without immediately failing the test.
+     * Most tests have at most one error, but some frameworks support
+     * "soft" assertions that record errors without immediately failing the test
+     * (e.g., Playwright's expect.soft(), pytest's pytest-check plugin, JUnit 5's assertAll()).
      */
     errors?: ReportError[];
 
