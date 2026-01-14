@@ -28,8 +28,8 @@ jobs:
         with:
           version: 10
 
-      - name: Publish to NPM
+      - name: Build & Publish
         run: |
           pnpm i --frozen-lockfile
           pnpm exec kubik ./build.mts
-          pnpm publish
+          pnpm publish --no-git-checks
