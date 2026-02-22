@@ -160,17 +160,18 @@ The repository is published to NPM and is compatible with both Node.js and brows
 npm install @flakiness/flakiness-report
 ```
 
-The package provides a simple validation utility for the reports.
+The package provides TypeScript types and a Zod schema for runtime validation:
 
 ```typescript
-import { FlakinessReport, validateReport } from '@flakiness/flakiness-report';
+import { FlakinessReport, Schema } from '@flakiness/flakiness-report';
 
 // Type-safe report handling
 const report: FlakinessReport.Report = { /* ... */ };
 
-const validationError = validateReport(report);
-if (validationError)
-  console.error(`Validation failed:`, validationError);
+// Runtime validation using Zod schema
+const result = Schema.Report.safeParse(report);
+if (!result.success)
+  console.error(`Validation failed:`, result.error);
 ```
 
 ## Development
