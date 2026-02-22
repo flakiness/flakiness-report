@@ -26,11 +26,24 @@ pnpm run watch
 
 This will watch the `src/` directory and automatically rebuild whenever you make changes to the TypeScript files.
 
-## How to Deploy the Project
+## Releasing
 
-```bash
-# The following will bump version, create commit, tag, and push tag
-# to the CI. The version will auto-published to the NPM.
-pnpm run minor # or patch, or major-major-major
-```
+To release a new version:
 
+1. Bump the version:
+
+   ```bash
+   # For a stable minor release
+   pnpm version minor
+
+   # For an alpha pre-release
+   pnpm version preminor --preid=alpha
+   ```
+
+2. Push the tag:
+
+   ```bash
+   git push --tags
+   ```
+
+   CI will handle publishing to npm. Pre-releases are published under @next tag.
