@@ -190,6 +190,14 @@ export namespace FlakinessReport {
     sources?: Source[],
 
     /**
+     * Flakiness.io project identifier in `org/project` format (e.g., `"myorg/myproject"`).
+     * When set, report viewers can fetch cloud history for this report
+     * from the corresponding Flakiness.io project.
+     * Also used for OIDC-based authentication when uploading reports.
+     */
+    flakinessProject?: string;
+
+    /**
      * Report category identifier (e.g., 'playwright', 'junit', 'perf').
      * See `CATEGORY_*` constants for predefined categories.
      */

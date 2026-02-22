@@ -129,7 +129,10 @@ export namespace Schema {
 
   export const UtilizationTelemetry = z.tuple([DurationMS, z.number().min(0).max(100)]);
 
+  export const FlakinessProject = z.string();
+
   export const Report = z.object({
+    flakinessProject: FlakinessProject.optional(),
     category: z.string().min(1).max(100),
     commitId: CommitId,
     relatedCommitIds: z.array(CommitId).optional(),
