@@ -11,6 +11,7 @@ export namespace FlakinessReport {
   export type AttachmentId = Brand<string, 'FlakinessReport.AttachmentId'>;
   export type UnixTimestampMS = Brand<number, 'FlakinessReport.UnixTimestampMS'>;
   export type DurationMS = Brand<number, 'FlakinessReport.DurationMS'>;
+  export type Stream = Brand<number, 'FlakinessReport.Stream'>;
   export type Number1Based = Brand<number, 'FlakinessReport.Number1Based'>;
   export type GitFilePath = Brand<string, 'FlakinessReport.GitFilePath'>;
 
@@ -519,8 +520,8 @@ export namespace FlakinessReport {
    */
   export type STDIOEntry = { text: string } | { buffer: string };
 
-  export type STREAM_STDOUT = 1;
-  export type STREAM_STDERR = 2;
+  export const STREAM_STDOUT = 1 as Stream;
+  export const STREAM_STDERR = 2 as Stream;
 
   /**
    * If the entry is binary data, it is base64-encoded in "buffer"; otherwise, it's a text entry.
@@ -529,7 +530,7 @@ export namespace FlakinessReport {
     /**
      * When missing, defaults to stdout.
      */
-    stream?: STREAM_STDOUT | STREAM_STDERR,
+    stream?: Stream,
 
     /**
      * Timestamp delta from previous TimedStdIOEntry. The very first sample contains delta from
