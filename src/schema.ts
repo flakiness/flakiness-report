@@ -44,9 +44,10 @@ export namespace Schema {
   export const TimedSTDIOEntry = z.object({
     io: z.union([IO_STDOUT, IO_STDERR]).optional(),
     dts: DurationMS,
-    text: z.string().optional(),
-    buffer: z.string().optional(),
-  });
+  }).and(z.union([
+    z.object({ text: z.string() }),
+    z.object({ buffer: z.string() }),
+  ]));
 
   export const ReportError = z.object({
     location: Location.optional(),

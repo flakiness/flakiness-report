@@ -522,6 +522,9 @@ export namespace FlakinessReport {
   export type IO_STDOUT = 1;
   export type IO_STDERR = 2;
 
+  /**
+   * If the entry is binary data, it is base64-encoded in "buffer"; otherwise, it's a text entry.
+   */
   export type TimedSTDIOEntry = {
     /**
      * When missing, defaults to IO_STDOUT.
@@ -533,13 +536,10 @@ export namespace FlakinessReport {
      * Run Attempt's `startTimestamp`.
      */
     dts: DurationMS,
-
-    /**
-     * If the entry is binary data, it is base64-encoded in "buffer"; otherwise, it's a text entry.
-     */
-    text?: string,
-    buffer?: string,
-  }
+  } & (
+    { text: string } |
+    { buffer: string }
+  )
 
   /**
    * Information about an error thrown during test execution.
