@@ -38,6 +38,16 @@ export namespace Schema {
     z.object({ buffer: z.string() })
   ]);
 
+  export const IO_STDOUT = z.literal(1);
+  export const IO_STDERR = z.literal(2);
+
+  export const TimedSTDIOEntry = z.object({
+    io: z.union([IO_STDOUT, IO_STDERR]).optional(),
+    dts: DurationMS,
+    text: z.string().optional(),
+    buffer: z.string().optional(),
+  });
+
   export const ReportError = z.object({
     location: Location.optional(),
 
@@ -92,6 +102,7 @@ export namespace Schema {
     parallelIndex: z.number().optional(),
     steps: z.array(TestStep).optional(),
 
+    stdio: z.array(TimedSTDIOEntry).optional(),
     stdout: z.array(STDIOEntry).optional(),
     stderr: z.array(STDIOEntry).optional(),
     attachments: z.array(Attachment).optional(),
