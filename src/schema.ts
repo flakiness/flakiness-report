@@ -1,4 +1,5 @@
 import z from 'zod/v4';
+import { FlakinessReport } from './flakinessReport.js';
 
 export namespace Schema {
   export const CommitId = z.string().min(40).max(40);
@@ -38,8 +39,8 @@ export namespace Schema {
     z.object({ buffer: z.string() })
   ]);
 
-  export const STREAM_STDOUT = z.literal(1);
-  export const STREAM_STDERR = z.literal(2);
+  export const STREAM_STDOUT = z.literal(FlakinessReport.STREAM_STDOUT);
+  export const STREAM_STDERR = z.literal(FlakinessReport.STREAM_STDERR);
 
   export const TimedSTDIOEntry = z.object({
     stream: z.union([STREAM_STDOUT, STREAM_STDERR]).optional(),
