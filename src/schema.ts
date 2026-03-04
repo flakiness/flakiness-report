@@ -38,11 +38,11 @@ export namespace Schema {
     z.object({ buffer: z.string() })
   ]);
 
-  export const IO_STDOUT = z.literal(1);
-  export const IO_STDERR = z.literal(2);
+  export const STREAM_STDOUT = z.literal(1);
+  export const STREAM_STDERR = z.literal(2);
 
   export const TimedSTDIOEntry = z.object({
-    io: z.union([IO_STDOUT, IO_STDERR]).optional(),
+    stream: z.union([STREAM_STDOUT, STREAM_STDERR]).optional(),
     dts: DurationMS,
   }).and(z.union([
     z.object({ text: z.string() }),

@@ -519,17 +519,17 @@ export namespace FlakinessReport {
    */
   export type STDIOEntry = { text: string } | { buffer: string };
 
-  export type IO_STDOUT = 1;
-  export type IO_STDERR = 2;
+  export type STREAM_STDOUT = 1;
+  export type STREAM_STDERR = 2;
 
   /**
    * If the entry is binary data, it is base64-encoded in "buffer"; otherwise, it's a text entry.
    */
   export type TimedSTDIOEntry = {
     /**
-     * When missing, defaults to IO_STDOUT.
+     * When missing, defaults to stdout.
      */
-    io?: IO_STDOUT | IO_STDERR,
+    stream?: STREAM_STDOUT | STREAM_STDERR,
 
     /**
      * Timestamp delta from previous TimedStdIOEntry. The very first sample contains delta from
