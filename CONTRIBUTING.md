@@ -43,7 +43,7 @@ To release a new version:
 2. Push the tag:
 
    ```bash
-   git push --tags
+   git push --follow-tags
    ```
 
    CI will handle publishing to npm. Pre-releases are published under @next tag.
