@@ -453,11 +453,20 @@ export namespace FlakinessReport {
     steps?: TestStep[];
 
     /**
+     * Standard output and error captured during test execution.
+     * Unlike deprecated `stdout` and `stderr`, this array is strictly
+     * ordered.
+     */
+    stdio?: TimedSTDIOEntry[];
+
+    /**
      * Standard output captured during test execution.
+     * @deprecated please use `stdio` array.
      */
     stdout?: STDIOEntry[];
     /**
      * Standard error output captured during test execution.
+     * @deprecated please use `stdio` array.
      */
     stderr?: STDIOEntry[];
     /**
@@ -506,8 +515,31 @@ export namespace FlakinessReport {
 
   /**
    * If the entry is binary data, it is base64-encoded in "buffer"; otherwise, it's a text entry.
+   * @deprecated Please use stdio array and TimedSTDIOEntry instead.
    */
   export type STDIOEntry = { text: string } | { buffer: string };
+
+  export type STREAM_STDOUT = 1;
+  export type STREAM_STDERR = 2;
+
+  /**
+   * If the entry is binary data, it is base64-encoded in "buffer"; otherwise, it's a text entry.
+   */
+  export type TimedSTDIOEntry = {
+    /**
+     * When missing, defaults to stdout.
+     */
+    stream?: STREAM_STDOUT | STREAM_STDERR,
+
+    /**
+     * Timestamp delta from previous TimedStdIOEntry. The very first sample contains delta from
+     * Run Attempt's `startTimestamp`.
+     */
+    dts: DurationMS,
+  } & (
+    { text: string } |
+    { buffer: string }
+  )
 
   /**
    * Information about an error thrown during test execution.
