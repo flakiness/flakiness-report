@@ -515,7 +515,7 @@ export namespace FlakinessReport {
 
   /**
    * If the entry is binary data, it is base64-encoded in "buffer"; otherwise, it's a text entry.
-   * @deprecated Please use stdio array and TimedStdIOEntry instead.
+   * @deprecated Please use stdio array and TimedSTDIOEntry instead.
    */
   export type STDIOEntry = { text: string } | { buffer: string };
 
