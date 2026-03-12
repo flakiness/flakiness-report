@@ -142,9 +142,17 @@ export namespace Schema {
 
   export const UtilizationTelemetry = z.tuple([DurationMS, z.number().min(0).max(100)]);
 
+  export const Source = z.object({
+    filePath: GitFilePath,
+    text: z.string(),
+    lineOffset: z.number().optional(),
+    contentType: z.string().optional(),
+  });
+
   export const FlakinessProject = z.string();
 
   export const Report = z.object({
+    sources: z.array(Source).optional(),
     flakinessProject: FlakinessProject.optional(),
     category: z.string().min(1).max(100),
     commitId: CommitId,
