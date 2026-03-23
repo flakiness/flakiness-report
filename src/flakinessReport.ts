@@ -199,6 +199,12 @@ export namespace FlakinessReport {
     flakinessProject?: string;
 
     /**
+     * Optional human-readable report title.
+     * Typically used to name a CI run, matrix shard, or other execution group.
+     */
+    title?: string;
+
+    /**
      * Report category identifier (e.g., 'playwright', 'junit', 'perf').
      * See `CATEGORY_*` constants for predefined categories.
      */
