@@ -154,6 +154,7 @@ export namespace Schema {
   export const Report = z.object({
     sources: z.array(Source).optional(),
     flakinessProject: FlakinessProject.optional(),
+    title: z.string().optional(),
     category: z.string().min(1).max(100),
     commitId: CommitId,
     relatedCommitIds: z.array(CommitId).optional(),

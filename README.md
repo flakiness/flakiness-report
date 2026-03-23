@@ -57,6 +57,7 @@ flakiness-report/
 
 ```json
 {
+  "title": "E2E tests on qa backend / run-tests-web-2 (01-03)",
   "category": "pytest",
   "commitId": "a1b2c3d4e5f6789012345678901234567890abcd",
   "environments": [
@@ -115,7 +116,9 @@ flakiness-report/
     Test tags are case-insensitive markers assigned to tests. Tags are static and cannot be dynamically attached during test execution; they are typically modified only when source code changes. Common examples include `smoke`, `e2e`, and `regression`.
 
     The Flakiness Report viewer supports filtering reports by tags.
-8. **Annotations**
+8. **Report Title**
+    The optional top-level `title` field gives the overall run a human-readable name. This is useful for CI matrix shards, manually triggered runs, or any workflow where viewers need more context than a job URL alone.
+9. **Annotations**
     Annotations are metadata attached to individual run attempts, unlike tags which are attached to tests themselves. Annotations are dynamic and can vary across different test executions.
     
     Each annotation has a type and a description. Common use cases include:
@@ -123,7 +126,7 @@ flakiness-report/
     - `owner` annotations to assign ownership of specific tests
 
     The Flakiness Report viewer supports filtering by annotations.
-9. **Attachments**
+10. **Attachments**
     Each run attempt can have attachments: screenshots, videos, logs, or other debugging artifacts referenced by ID. Actual attachment contents are stored on the file system, following the directory layout explained in the "Attachments" section.
 
 ### Attachments
@@ -177,4 +180,3 @@ if (!result.success)
 ## Development
 
 For information on building, watching, and contributing to this project, see [CONTRIBUTING.md](./CONTRIBUTING.md).
-
