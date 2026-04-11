@@ -70,6 +70,7 @@ export namespace Schema {
     location: Location.optional(),
     snippet: z.string().optional(),
     error: ReportError.optional(),
+    attachmentIds: z.array(AttachmentId).optional(),
     get steps() {
       return z.array(TestStep).optional();
     },
