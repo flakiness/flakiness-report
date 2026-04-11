@@ -366,9 +366,18 @@ export namespace FlakinessReport {
    */
   export interface Annotation {
     /**
-     * Type of annotation (e.g., 'skip', 'slow', 'fixme').
+     * Type of annotation. Any string is allowed, but the following values are
+     * well-known and receive default rendering in Flakiness.io tooling:
+     *
+     * - `'skip'`   — test was skipped (not executed).
+     * - `'fixme'`  — test is known-broken and awaiting a fix; typically not run.
+     * - `'fail'`   — test is expected to fail (inverted expectation).
+     * - `'slow'`   — test is expected to take a long time; timeouts may be relaxed.
+     * - `'owner'`  — identifies the owner of the test; `description` holds the owner value.
+     *
+     * Custom annotation types are supported and will render as generic pills.
      */
-    type: string,
+    type: 'skip' | 'fixme' | 'fail' | 'slow' | 'owner' | (string & {}),
     /**
      * Optional human-readable description of the annotation.
      */
