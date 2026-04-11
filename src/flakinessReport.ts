@@ -524,7 +524,7 @@ export namespace FlakinessReport {
     error?: ReportError;
 
     /**
-     * Attachments generated during this test attempt (screenshots, videos, logs, etc.).
+     * Attachments generated during this test step (screenshots, videos, logs, etc.).
      */
     attachments?: Attachment[];
 
