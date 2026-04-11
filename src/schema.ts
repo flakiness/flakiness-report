@@ -64,18 +64,6 @@ export namespace Schema {
 
   export const SuiteType = z.enum(['file', 'anonymous suite', 'suite']);
 
-  export const TestStep = z.object({
-    title: z.string(),
-    duration: DurationMS.optional(),
-    location: Location.optional(),
-    snippet: z.string().optional(),
-    error: ReportError.optional(),
-    attachmentIds: z.array(AttachmentId).optional(),
-    get steps() {
-      return z.array(TestStep).optional();
-    },
-  });
-
   export const Attachment = z.object({
     name: z.string(),
     contentType: z.string(),
@@ -86,6 +74,18 @@ export namespace Schema {
     type: z.string(),
     description: z.string().optional(),
     location: Location.optional(),
+  });
+
+  export const TestStep = z.object({
+    title: z.string(),
+    duration: DurationMS.optional(),
+    location: Location.optional(),
+    snippet: z.string().optional(),
+    error: ReportError.optional(),
+    attachments: z.array(Attachment).optional(),
+    get steps() {
+      return z.array(TestStep).optional();
+    },
   });
 
   export const RunAttempt = z.object({

@@ -524,10 +524,9 @@ export namespace FlakinessReport {
     error?: ReportError;
 
     /**
-     * Optional ids of attachments produced by this step. The attachments
-     * themselves live on the enclosing `RunAttempt.attachments`.
+     * Attachments generated during this test step (screenshots, videos, logs, etc.).
      */
-    attachmentIds?: AttachmentId[];
+    attachments?: Attachment[];
 
     /**
      * Nested sub-steps within this step.
