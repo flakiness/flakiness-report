@@ -7,8 +7,8 @@
   },
   "private": false,
   "scripts": {
-    "build": "npx kubik ./build.mts",
-    "watch": "npx kubik ./build.mts --watch"
+    "build": "pnpm kubik ./build.mts",
+    "watch": "pnpm kubik ./build.mts --watch"
   },
   "exports": {
     ".": {
