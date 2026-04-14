@@ -553,10 +553,13 @@ export namespace FlakinessReport {
     stream?: Stream,
 
     /**
-     * Timestamp delta from previous TimedStdIOEntry. The very first sample contains delta from
-     * Run Attempt's `startTimestamp`.
+     * When present, timestamp delta from previous TimedStdIOEntry. The very first sample contains
+     * delta from Run Attempt's `startTimestamp`.
+     *
+     * When missing, timing is unavailable, but the enclosing `stdio` array still preserves the
+     * original output order.
      */
-    dts: DurationMS,
+    dts?: DurationMS,
   } & (
     { text: string } |
     { buffer: string }

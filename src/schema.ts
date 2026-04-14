@@ -44,7 +44,7 @@ export namespace Schema {
 
   export const TimedSTDIOEntry = z.object({
     stream: z.union([STREAM_STDOUT, STREAM_STDERR]).optional(),
-    dts: DurationMS,
+    dts: DurationMS.optional(),
   }).and(z.union([
     z.object({ text: z.string() }),
     z.object({ buffer: z.string() }),
