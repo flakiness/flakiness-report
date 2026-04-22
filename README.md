@@ -1,3 +1,6 @@
+> [!NOTE]
+> Building your own reporter? Check out [features.md](./features.md) for a checklist.
+
 # Flakiness JSON Report Specification
 
 Official specification for the [Flakiness.io](https://flakiness.io) report format.
