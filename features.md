@@ -20,7 +20,7 @@ the clarification describes what "supported" means in practice.
 14. **Tags** — extracts test tags from the runner's native tagging mechanism.
 15. **`parallelIndex`** — identifies which parallel worker executed each attempt.
 16. **`FLAKINESS_TITLE`** — honors the env var as the report title when no explicit title is provided.
-17. **`FLAKINESS_OUTPUT_DIR` - directory and upload-toggle env vars.
+17. **`FLAKINESS_OUTPUT_DIR`** - report output directory
 18. **Sources** — populates top-level `sources[]` with embedded code covering all `Location` references in the report.
 19. **Error snippets** — `ReportError.snippet` with ANSI-highlighted excerpts where the runner produces them.
 20. **Errors support** — multiple errors per attempt (soft assertions); proper Error objects with `message`/`stack`, plus thrown values (`value`) for non-Error throws; error locations parsed from stacks.
