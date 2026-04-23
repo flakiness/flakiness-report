@@ -39,3 +39,14 @@ the clarification describes what "supported" means in practice.
 2. Flakiness.io identifies a test by its full name (suite path + title) scoped to a
    given environment. Two tests with the same full name running in any common
    environment will be merged within that environment — hence feature 25.
+3. Each attempt carries two status fields:
+   - `status` — how the execution actually went:
+     - `passed` — the test ran to completion without errors.
+     - `failed` — the test ran and produced one or more errors (assertion failure, thrown exception, etc.).
+     - `timedOut` — the test exceeded its timeout and was terminated by the runner.
+     - `interrupted` — the test was stopped externally (run aborted, worker killed, SIGINT, etc.) before producing a verdict.
+     - `skipped` — the test did not run (e.g. marked `skip`/`fixme`, or filtered out).
+   - `expectedStatus` — the outcome the test was expected to have. Defaults to `passed`. Test runners that support "expected to fail" tests set this to `failed`.
+
+   Flakiness.io renders an attempt as a checkmark when `status === expectedStatus`, as skipped when `status === 'skipped'` (regardless of `expectedStatus`), and as a failure otherwise. So a test with `expectedStatus: 'failed'` that actually fails is displayed as passing.
+
