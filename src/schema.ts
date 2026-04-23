@@ -161,7 +161,7 @@ export namespace Schema {
     relatedCommitIds: z.array(CommitId).optional(),
     configPath: GitFilePath.optional(),
     url: z.string().optional(),
-    environments: z.array(Environment).min(1),
+    environments: z.array(Environment),
     suites: z.array(Suite).optional(),
     tests: z.array(Test).optional(),
     unattributedErrors: z.array(ReportError).optional(),
