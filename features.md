@@ -31,7 +31,11 @@ the clarification describes what "supported" means in practice.
     run. Respects `FLAKINESS_DISABLE_UPLOAD` env variable to disable
     auto-upload behavior.
 24. **CPU / RAM telemetry** — samples `cpuAvg`, `cpuMax`, `ram` as time series during the run. Also provides `cpuCount` and `ramBytes`.
+25. **Duplicate-name handling** — detects tests that share the same suite path *and* the same set of `environmentIdx` values, warns the user, and either renames the later occurrences (e.g. appending a ` – dupe #N` suffix) or fails them, so the report doesn't silently merge distinct tests into one. Marking the affected attempts with a `dupe` annotation is recommended.
 
 # Implementation Notes
 
 1. All locations must be relative to the git-root, POSIX-style.
+2. Flakiness.io identifies a test by its full name (suite path + title) within an
+   environment. Two tests with identical full names running in the same environment
+   will be merged into one — hence feature 25.
