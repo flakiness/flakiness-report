@@ -49,4 +49,12 @@ the clarification describes what "supported" means in practice.
    - `expectedStatus` — the outcome the test was expected to have. Defaults to `passed`. Test runners that support "expected to fail" tests set this to `failed`.
 
    Flakiness.io renders an attempt as a checkmark when `status === expectedStatus`, as skipped when `status === 'skipped'` (regardless of `expectedStatus`), and as a failure otherwise. So a test with `expectedStatus: 'failed'` that actually fails is displayed as passing.
+4. Flakiness.io identifies an environment by the combination of `Environment.name`
+   and `Environment.metadata`. When a runner executes tests across several
+   environments in a single run (e.g. Playwright projects, Vitest projects, tox
+   matrices — see feature 3), every environment in `environments[]` must be
+   unique on that key; otherwise Flakiness.io will merge them and attribute
+   attempts from all of them to a single environment. Reporters should either
+   give each environment a distinct `name`, or disambiguate same-named
+   environments via `metadata`.
 
