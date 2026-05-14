@@ -232,6 +232,52 @@ export namespace FlakinessReport {
     url?: string;
 
     /**
+     * Identifies the tool that produced this report (typically a Flakiness reporter
+     * package like `@flakiness/playwright` or `pytest-flakiness` or a JUnit converter `convert-junit`).
+     */
+    generatedBy?: {
+      /**
+       * Name of the producer (e.g., `"@flakiness/playwright"`).
+       */
+      name: string,
+      /**
+       * Version of the producer (e.g., `"1.2.3"`).
+       */
+      version: string,
+    };
+
+    /**
+     * Identifies the underlying test runner whose execution this report describes
+     * (e.g., `playwright`, `jest`, `pytest`). Distinct from `generatedBy`, which
+     * identifies the reporter integration that wrote the JSON.
+     */
+    testRunner?: {
+      /**
+       * Name of the test runner (e.g., `"playwright"`).
+       */
+      name: string,
+      /**
+       * Version of the test runner (e.g., `"1.50.0"`).
+       */
+      version: string,
+    };
+
+    /**
+     * Identifies the language runtime executing the test process
+     * (e.g., `node`, `bun`, `deno`, `cpython`, `pypy`).
+     */
+    runtime?: {
+      /**
+       * Name of the runtime (e.g., `"node"`, `"bun"`, `"deno"`, `"cpython"`).
+       */
+      name: string,
+      /**
+       * Version of the runtime (e.g., `"22.10.0"`).
+       */
+      version: string,
+    };
+
+    /**
      * List of all environments that were used to run tests.
      * At least one environment must be present in this list for the report to be valid.
      */
