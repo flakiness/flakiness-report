@@ -152,6 +152,21 @@ export namespace Schema {
 
   export const FlakinessProject = z.string();
 
+  export const GeneratedBy = z.object({
+    name: z.string().min(1),
+    version: z.string().min(1),
+  });
+
+  export const TestRunner = z.object({
+    name: z.string().min(1),
+    version: z.string().min(1),
+  });
+
+  export const Runtime = z.object({
+    name: z.string().min(1),
+    version: z.string().min(1),
+  });
+
   export const Report = z.object({
     sources: z.array(Source).optional(),
     flakinessProject: FlakinessProject.optional(),
@@ -161,6 +176,9 @@ export namespace Schema {
     relatedCommitIds: z.array(CommitId).optional(),
     configPath: GitFilePath.optional(),
     url: z.string().optional(),
+    generatedBy: GeneratedBy.optional(),
+    testRunner: TestRunner.optional(),
+    runtime: Runtime.optional(),
     environments: z.array(Environment),
     suites: z.array(Suite).optional(),
     tests: z.array(Test).optional(),
