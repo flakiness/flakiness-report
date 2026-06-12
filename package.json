@@ -1,6 +1,7 @@
 {
   "name": "@flakiness/flakiness-report",
   "version": "0.34.0",
+  "packageManager": "pnpm@11.5.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/flakiness/flakiness-report.git"
