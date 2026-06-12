@@ -131,6 +131,13 @@ flakiness-report/
     The Flakiness Report viewer supports filtering by annotations.
 10. **Attachments**
     Each run attempt can have attachments: screenshots, videos, logs, or other debugging artifacts referenced by ID. Actual attachment contents are stored on the file system, following the directory layout explained in the "Attachments" section.
+11. **Producer & runtime metadata**
+    Optional top-level fields capture *who* produced the report and *where* it ran:
+    - `generatedBy` — the reporter package that emitted the JSON (e.g., `@flakiness/playwright`, version `1.8.0`).
+    - `testRunner` — the underlying test runner the reporter integrated with (e.g., `playwright`, version `1.57.0`).
+    - `runtime` — the language runtime executing the test process (e.g., `node` 22.10, `bun` 1.1, `cpython` 3.13). Flakiness can be runtime-dependent, so capturing this helps diagnose reproducibility issues.
+
+    Each is a `{ name, version }` object. All three are optional; when present, both fields must be set.
 
 ### Attachments
 

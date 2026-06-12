@@ -4,7 +4,7 @@ Checklist for authors building a Flakiness Report generator, and for users
 assessing how complete an existing reporter is. Each row names a capability;
 the clarification describes what "supported" means in practice.
 
-1. **Report metadata** — `commitId`, `flakinessProject`, CI run URL, config path, run start time, run duration.
+1. **Report metadata** — `commitId`, `flakinessProject`, CI run URL, config path, run start time, run duration. Also `generatedBy` (the reporter package's `{ name, version }`), `testRunner` (the underlying runner's `{ name, version }`), and `runtime` (the JS/Python runtime's `{ name, version }` — e.g., `node` / `bun` / `cpython`); each is optional but, when present, must include both `name` and `version`.
 2. **Environment metadata** — environment `name` and OS name/version/arch on each environment.
 3. **Multiple environments** — emits multiple entries in `environments[]` when the runner supports multiple projects (like ViTest or Playwright), and attributes each attempt via `environmentIdx`.
 4. **Custom environments** (`FK_ENV_*`) — parses `FK_ENV_*` environment variables into `environment.metadata`.
