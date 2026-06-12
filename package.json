@@ -27,7 +27,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^25.9.3",
     "zod": "^4.1.12",
     "esbuild": "^0.27.0",
     "kubik": "^0.24.0",
