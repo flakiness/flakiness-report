@@ -29,7 +29,7 @@
   "devDependencies": {
     "@types/node": "^25.9.3",
     "zod": "^4.1.12",
-    "esbuild": "^0.27.0",
+    "esbuild": "^0.28.1",
     "kubik": "^0.24.0",
     "tsx": "^4.20.6",
     "typescript": "^6.0.3"
