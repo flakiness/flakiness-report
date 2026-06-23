@@ -1,6 +1,6 @@
 {
   "name": "@flakiness/flakiness-report",
-  "version": "0.34.0",
+  "version": "0.35.0",
   "packageManager": "pnpm@11.5.0",
   "repository": {
     "type": "git",
@@ -29,10 +29,10 @@
   },
   "devDependencies": {
     "@types/node": "^25.9.3",
-    "zod": "^4.1.12",
     "esbuild": "^0.28.1",
     "kubik": "^0.24.0",
     "tsx": "^4.20.6",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "zod": "^4.1.12"
   }
 }
