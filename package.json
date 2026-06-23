@@ -20,7 +20,7 @@
   },
   "type": "module",
   "description": "Flakiness.io report format specification",
-  "types": "./types/index.d.ts",
+  "types": "./types/src/index.d.ts",
   "keywords": [],
   "author": "Degu Labs, Inc",
   "license": "MIT",
