@@ -94,7 +94,7 @@ export namespace Schema {
 
     expectedStatus: TestStatus.optional(),
     status: TestStatus.optional(),
-    startTimestamp: UnixTimestampMS,
+    startTimestamp: UnixTimestampMS.optional(),
     duration: DurationMS.optional(),
 
     timeout: DurationMS.optional(),

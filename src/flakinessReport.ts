@@ -479,7 +479,7 @@ export namespace FlakinessReport {
     /**
      * Unix timestamp (in milliseconds) when this test attempt started.
      */
-    startTimestamp: UnixTimestampMS;
+    startTimestamp?: UnixTimestampMS;
 
     /**
      * Duration of this test attempt in milliseconds.
