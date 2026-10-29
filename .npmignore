@@ -2,7 +2,7 @@
 # See https://docs.npmjs.com/misc/developers
 **/*
 
-# Include sources from lib, but not map files.
+# Include sources from lib.
 !lib/**/*.js
 # Include generated types and entrypoint.
 !types/**/*.d.ts

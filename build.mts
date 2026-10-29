@@ -26,7 +26,7 @@ const { errors } = await esbuild.build({
   format: 'esm',
   platform: 'node',
   target: ['node24'],
-  sourcemap: true,
+  sourcemap: false,
   bundle: false,
   minify: false,
 });
